@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unity.Services.Core.Network
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unity.Services.Core.Configuration", "Unity.Services.Core.Configuration.csproj", "{FAFBEE0E-887A-E084-E25A-760E7E04FABD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hertzole.GoldPlayer", "Hertzole.GoldPlayer.csproj", "{F6A3B57D-31AB-1757-7956-E6ED49A36C24}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unity.PlasticSCM.Editor", "Unity.PlasticSCM.Editor.csproj", "{BA5EAF6C-8DA2-96CB-E4F2-C1449C0CEAF7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unity.VisualScripting.Core.Editor", "Unity.VisualScripting.Core.Editor.csproj", "{F3BA681B-E015-ECA6-1E44-980D2369550E}"
@@ -82,6 +84,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection", "Unity.TestTools.CodeCoverage.Editor.OpenCover.Mono.Reflection.csproj", "{91C7D9BD-F59E-C980-69C7-D474D354C1D6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unity.VisualScripting.Shared.Editor", "Unity.VisualScripting.Shared.Editor.csproj", "{998BC17A-C20A-827F-E060-9D9F738EA0AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hertzole.GoldPlayer.Editor", "Hertzole.GoldPlayer.Editor.csproj", "{FA2386BA-556A-4690-B9E7-94B5940ABB61}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -165,6 +169,10 @@ Global
 		{FAFBEE0E-887A-E084-E25A-760E7E04FABD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAFBEE0E-887A-E084-E25A-760E7E04FABD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAFBEE0E-887A-E084-E25A-760E7E04FABD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6A3B57D-31AB-1757-7956-E6ED49A36C24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6A3B57D-31AB-1757-7956-E6ED49A36C24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6A3B57D-31AB-1757-7956-E6ED49A36C24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6A3B57D-31AB-1757-7956-E6ED49A36C24}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BA5EAF6C-8DA2-96CB-E4F2-C1449C0CEAF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BA5EAF6C-8DA2-96CB-E4F2-C1449C0CEAF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA5EAF6C-8DA2-96CB-E4F2-C1449C0CEAF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -253,6 +261,10 @@ Global
 		{998BC17A-C20A-827F-E060-9D9F738EA0AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{998BC17A-C20A-827F-E060-9D9F738EA0AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{998BC17A-C20A-827F-E060-9D9F738EA0AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA2386BA-556A-4690-B9E7-94B5940ABB61}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA2386BA-556A-4690-B9E7-94B5940ABB61}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA2386BA-556A-4690-B9E7-94B5940ABB61}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA2386BA-556A-4690-B9E7-94B5940ABB61}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
