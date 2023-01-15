@@ -56,27 +56,27 @@
     <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Core\FOVKickClassEditor.cs" />
-    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Settings\GoldPlayerProjectSettings.cs" />
-    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\UI\GoldPlayerUIEditor.cs" />
-    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Interaction\GoldPlayerInteractionEditor.cs" />
-    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Core\GoldPlayerInputSystemEditor.cs" />
-    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Interaction\GoldPlayerInteractableEditor.cs" />
-    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Graphics\GoldPlayerGraphicsEditor.cs" />
-    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Object Bob\GoldPlayerObjectBobEditor.cs" />
     <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Settings\GoldPlayerProjectSettingsProvider.cs" />
-    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Animator\GoldPlayerAnimatorEditor.cs" />
-    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Core\AudioItemEditor.cs" />
-    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Audio Extras\GoldPlayerAudioAnimatorEditor.cs" />
-    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Helpers\GoldPlayerMenuItems.cs" />
-    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Core\MovementSpeedsEditor.cs" />
-    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Core\GoldPlayerInputEditor.cs" />
     <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Helpers\GoldPlayerScriptHelpers.cs" />
+    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Settings\GoldPlayerProjectSettings.cs" />
+    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Audio Extras\GoldPlayerAudioAnimatorEditor.cs" />
     <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Core\GoldPlayerControllerEditor.cs" />
-    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Audio Extras\GoldPlayerAudioAnimatorTriggersEditor.cs" />
-    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Core\GoldPlayerPropertyDrawer.cs" />
     <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Helpers\GoldPlayerUIHelper.cs" />
+    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Core\MovementSpeedsEditor.cs" />
+    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Animator\GoldPlayerAnimatorEditor.cs" />
+    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Interaction\GoldPlayerInteractableEditor.cs" />
+    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Audio Extras\GoldPlayerAudioAnimatorTriggersEditor.cs" />
+    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Core\GoldPlayerInputSystemEditor.cs" />
+    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Core\FOVKickClassEditor.cs" />
+    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Object Bob\GoldPlayerObjectBobEditor.cs" />
+    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\UI\GoldPlayerUIEditor.cs" />
+    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Helpers\GoldPlayerMenuItems.cs" />
     <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Core\BobClassEditor.cs" />
+    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Interaction\GoldPlayerInteractionEditor.cs" />
+    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Core\AudioItemEditor.cs" />
+    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Core\GoldPlayerInputEditor.cs" />
+    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Core\GoldPlayerPropertyDrawer.cs" />
+    <Compile Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Graphics\GoldPlayerGraphicsEditor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Library\PackageCache\se.hertzole.gold-player@47d59061e4\Editor\Hertzole.GoldPlayer.Editor.asmdef" />
