@@ -2,7 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RopeItemBehaviour : ItemBehaviour
-{
+namespace cox.tightrope {
+    public class RopeItemBehaviour : ItemBehaviour
+    {
 
+    }
 }
+
+

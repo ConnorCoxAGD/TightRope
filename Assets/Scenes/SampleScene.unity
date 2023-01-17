@@ -162,8 +162,8 @@ Light:
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
-    m_Bias: 0.05
-    m_NormalBias: 0.4
+    m_Bias: 0.057
+    m_NormalBias: 0.24
     m_NearPlane: 0.2
     m_CullingMatrixOverride:
       e00: 1
@@ -422,9 +422,29 @@ PrefabInstance:
       propertyPath: m_DefaultControlScheme
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 550905393, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: m_NotificationBehavior
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1486232910130243522, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: m_Name
       value: player
+      objectReference: {fileID: 0}
+    - target: {fileID: 1486232910130243529, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: items.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1486232910130243529, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: items.Array.data[0]
+      value: 
+      objectReference: {fileID: 6728734932842197462, guid: 5d543b434dc2ec6478da22e10d03b6d3, type: 3}
+    - target: {fileID: 1486232910130243533, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: cam.lookSensitivity.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1486232910130243533, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: cam.lookSensitivity.y
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1486232910130243535, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: m_RootOrder
@@ -468,6 +488,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1486232910130243535, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1486232910331922929, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1486232911008776273, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7324563237858715486, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
