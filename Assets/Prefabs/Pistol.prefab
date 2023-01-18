@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7801961489189978750}
   m_Layer: 0
-  m_Name: ShotPoint
+  m_Name: FirePoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -211,7 +211,7 @@ MonoBehaviour:
   description: It fires ouch pellets.
   bullet: {fileID: 314618178848815680, guid: d2e2ac7bf1a877d479e5caece7efd157, type: 3}
   speed: 0
-  shotPoint: {fileID: 7801961489189978750}
+  firePoint: {fileID: 7801961489189978750}
 --- !u!1 &6728734932883897171
 GameObject:
   m_ObjectHideFlags: 0

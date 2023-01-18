@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 namespace cox.tightrope {
     public class InventoryComponent : MonoBehaviour {
         [SerializeField] GameObject hand; //for a place to parent held items.
+        [SerializeField] GameObject crosshair;
         [SerializeField] List<ItemBehaviour> items = new List<ItemBehaviour>();
         int activeItem = 0;
 
@@ -20,13 +21,25 @@ namespace cox.tightrope {
             for(int i = 0; i < items.Count; i++) {
                 var instance = Instantiate(items[i], hand.transform);
                 items[i] = instance;
+                instance.gameObject.SetActive(false);
                 
             }
             ItemChanged();
         }
-        public void OnPrimaryFire() {
+        public void OnPrimaryUse() {
             if (items.Count > 0) {
-                items[activeItem].Activate();
+                if (items[activeItem].usesCrosshair) {
+                    items[activeItem].PrimaryFunction(crosshair);
+                }
+                else {
+                    items[activeItem].PrimaryFunction();
+                }
+                
+            }
+        }
+        public void OnSecondaryUse() {
+            if (items.Count > 0) {
+                items[activeItem].SecondaryFunction();
             }
         }
 
@@ -37,10 +50,10 @@ namespace cox.tightrope {
         public void OnChangeItem(InputValue input) {
             var value = input.Get<Vector2>().y;
             if (items.Count > 1 && value != 0) {
-                items[activeItem].enabled = false;
+                items[activeItem].gameObject.SetActive(false);
                 if (value > 0) {
                     Debug.Log("Increment.");
-                    if (activeItem < items.Count) {
+                    if (activeItem < items.Count - 1) {
                         activeItem++;
                     }
                     else {
@@ -49,7 +62,7 @@ namespace cox.tightrope {
                 }
                 else {
                     Debug.Log("Decrement.");
-                    if (activeItem > 0) {
+                    if (activeItem >= 1) {
                         activeItem--;
                     }
                     else {
@@ -63,7 +76,8 @@ namespace cox.tightrope {
         public void ItemChanged() {
             if (items.Count > 0) {
                 //items[activeItem].transform.SetPositionAndRotation(hand.transform.position, hand.transform.rotation);
-                items[activeItem].enabled = true;
+                Debug.LogFormat("Active item: {0}, Total items: {1}.", activeItem, items.Count);
+                items[activeItem].gameObject.SetActive(true);
             }
         }
 

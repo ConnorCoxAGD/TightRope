@@ -78,9 +78,18 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "PrimaryFire",
+                    "name": "PrimaryUse",
                     "type": "Button",
                     "id": "deda9984-a372-4be2-870f-3dc3084f67f6",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "SecondaryUse",
+                    "type": "Button",
+                    "id": "1bfa7d8d-2a6b-4995-aa9e-bff7733528c3",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -304,7 +313,18 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "PrimaryFire",
+                    "action": "PrimaryUse",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "064f06cd-52dc-4cf3-b129-3c345a4de2ff",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SecondaryUse",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

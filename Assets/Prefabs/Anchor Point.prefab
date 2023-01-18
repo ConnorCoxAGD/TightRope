@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6303545400241432433}
   - component: {fileID: 7669262907813804815}
   - component: {fileID: 3396659771929996586}
+  - component: {fileID: 8495995809780171926}
   m_Layer: 0
   m_Name: mesh
   m_TagString: Untagged
@@ -95,8 +96,20 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 1.25, y: 1, z: 1.25}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8495995809780171926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7733438549293465389}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08e9aa4d4aa81e64b994815d6d184376, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8274070826774151238
 GameObject:
   m_ObjectHideFlags: 0
@@ -106,7 +119,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5262110168990899754}
-  - component: {fileID: 8514729699950314239}
   m_Layer: 0
   m_Name: Anchor Point
   m_TagString: Untagged
@@ -130,15 +142,3 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8514729699950314239
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8274070826774151238}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08e9aa4d4aa81e64b994815d6d184376, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
