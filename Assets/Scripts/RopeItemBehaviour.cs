@@ -14,10 +14,18 @@ namespace cox.tightrope {
         [SerializeField] LineRenderer line;
         List<GameObject> ropes = new List<GameObject>();
 
-
+        GameObject crosshair;
         public override void PrimaryFunction(GameObject crosshair) {
-            var direction = Camera.main.ScreenToWorldPoint(new Vector3(crosshair.transform.position.x, crosshair.transform.position.y, 1000));
-            firePoint.LookAt(direction);
+            var crosshairPos = Camera.main.ScreenToWorldPoint(new Vector3(crosshair.transform.position.x, crosshair.transform.position.y, 1));
+            var distance = Camera.main.transform.forward * 1000;
+            RaycastHit hit;
+            Physics.Raycast(crosshairPos, distance, out hit);
+            if (hit.collider) {
+                firePoint.LookAt(hit.point);
+            }
+            else {
+                firePoint.LookAt(distance);
+            }
             FireRope();
         }
 
@@ -29,36 +37,34 @@ namespace cox.tightrope {
 
             RaycastHit hit;
 
-            Debug.DrawRay(firePoint.position, firePoint.forward, Color.red, 5);
+            Debug.DrawRay(firePoint.position, firePoint.forward * 10, Color.red, 5);
             if (isConnected) {
                 Physics.Raycast(firePoint.position, firePoint.forward, out hit, maxDistanceFromPlayer * 3);
-                
             }
             else {
                 Physics.Raycast(firePoint.position, firePoint.forward, out hit, maxDistanceFromPlayer);
             }
-            Debug.LogFormat("Object hit: {0}.", hit.collider?.gameObject);
 
             if (hit.collider?.gameObject?.GetComponent<AnchorComponent>()) {
-                Debug.Log("Anchor Point Found!");
                 var anchor = hit.collider.gameObject.GetComponent<AnchorComponent>();
+                anchor.attachPoint = hit.point;
                 connectedAnchors.Add(anchor);
                 if (!isConnected) {
                     isConnected = true;
                     line = Instantiate(linePrefab);
                     ropes.Insert(0, line.gameObject);
                     if (ropes.Count > ropeLimit) {
-                        Destroy(ropes.Last<GameObject>());
+                        var lastRope = ropes.Last<GameObject>();
+                        ropes.Remove(lastRope);
                         ropes.TrimExcess();
+                        Destroy(lastRope);
+                        Debug.Log("destroy rope");
                     }
                 }
-
             }
             else {
                 Debug.Log("No anchor found.");
             }
-
-
         }
 
         void DisconnectRope() {
@@ -67,23 +73,24 @@ namespace cox.tightrope {
             ropes.TrimExcess();
             connectedAnchors.Clear();
             connectedAnchors.TrimExcess();
-
         }
 
         private void Update() {
             if (isConnected) {
                 if (connectedAnchors.Count < 2) {
                     line.SetPosition(0, firePoint.position);
-                    line.SetPosition(1, connectedAnchors[0].transform.position);
+                    line.SetPosition(1, connectedAnchors[0].attachPoint);
                 }
                 else {
-                    line.SetPosition(0, connectedAnchors[1].transform.position);
-                    line.SetPosition(1, connectedAnchors[0].transform.position);
                     isConnected = false;
+                    line.SetPosition(0, connectedAnchors[1].attachPoint);
+                    line.SetPosition(1, connectedAnchors[0].attachPoint);
+                    connectedAnchors.Clear();
+                    connectedAnchors.TrimExcess();
                     line = null;
                 }
 
-                if (Vector3.Distance(connectedAnchors[0].transform.position, firePoint.position) > maxDistanceFromPlayer) {
+                if (connectedAnchors.Count > 0 && Vector3.Distance(connectedAnchors[0].attachPoint, firePoint.position) > maxDistanceFromPlayer) {
                     DisconnectRope();
                 }
             }

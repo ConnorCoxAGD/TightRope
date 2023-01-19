@@ -52,7 +52,6 @@ namespace cox.tightrope {
             if (items.Count > 1 && value != 0) {
                 items[activeItem].gameObject.SetActive(false);
                 if (value > 0) {
-                    Debug.Log("Increment.");
                     if (activeItem < items.Count - 1) {
                         activeItem++;
                     }
@@ -61,7 +60,6 @@ namespace cox.tightrope {
                     }
                 }
                 else {
-                    Debug.Log("Decrement.");
                     if (activeItem >= 1) {
                         activeItem--;
                     }
@@ -75,8 +73,6 @@ namespace cox.tightrope {
 
         public void ItemChanged() {
             if (items.Count > 0) {
-                //items[activeItem].transform.SetPositionAndRotation(hand.transform.position, hand.transform.rotation);
-                Debug.LogFormat("Active item: {0}, Total items: {1}.", activeItem, items.Count);
                 items[activeItem].gameObject.SetActive(true);
             }
         }
