@@ -12,8 +12,8 @@ namespace cox.tightrope {
         [SerializeField] float maxDistanceFromPlayer = 3;
         [SerializeField] Transform firePoint;
         bool isConnected = false;
-        [SerializeField] Cable ropePrefab;
-        Cable rope = null;
+        [SerializeField] RopeComponent ropePrefab;
+        RopeComponent activeRope = null;
         List<Cable> ropes = new List<Cable>();
 
         CableSolver ropeSolver = null;
@@ -26,8 +26,7 @@ namespace cox.tightrope {
             //Use camera and crosshair raycast for really accurate aiming
             var crosshairPos = Camera.main.ScreenToWorldPoint(new Vector3(crosshair.transform.position.x, crosshair.transform.position.y, 1));
             var distance = Camera.main.transform.forward * 1000;
-            RaycastHit hit;
-            Physics.Raycast(crosshairPos, distance, out hit);
+            Physics.Raycast(crosshairPos, distance, out RaycastHit hit);
             if (hit.collider) {
                 firePoint.LookAt(hit.point);
             }
@@ -64,9 +63,9 @@ namespace cox.tightrope {
             if (!isConnected) {
                 isConnected = true;
                 //create rope
-                rope = Instantiate(ropePrefab);
-                rope.name = "rope";
-                ropes.Insert(0, rope);
+                activeRope = Instantiate(ropePrefab);
+                activeRope.name = "rope";
+                ropes.Insert(0, activeRope.cable);
                 if (ropes.Count > ropeLimit) {
                     //destroy excess ropes
                     var lastRope = ropes.Last<Cable>();
@@ -78,22 +77,19 @@ namespace cox.tightrope {
                 //add ropes to solver
                 ropeSolver.cables = ropes.ToArray();
                 //move rope links to desired positions
-                rope.links[0].body.gameObject.transform.position = firePoint.position;
-                rope.links[0].body.gameObject.transform.SetParent(firePoint); //allows rope to follow player position
-                rope.links[1].body.gameObject.transform.position = hit.point;
+                activeRope.AttachFirstPoint(firePoint, hit.point);
             }
             else {
                 isConnected = false;
-                rope.links[0].body.gameObject.transform.position = hit.point;
-                rope.links[0].body.gameObject.transform.SetParent(null);
-                rope = null;
+                activeRope.AttachSecondPoint(hit.point);
+                activeRope = null;
             }
         }
 
         void DisconnectRope() {
             isConnected = false;
-            if (rope == null) return;
-            Destroy(rope.gameObject);
+            if (activeRope == null) return;
+            Destroy(activeRope.gameObject);
             ropes.TrimExcess();
             ropeSolver.cables = ropes.ToArray();
         }
