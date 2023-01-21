@@ -28,5 +28,6 @@ public class RopeComponent : MonoBehaviour
     private IEnumerator FinishSetup() {
         yield return new WaitForEndOfFrame();
         this.gameObject.AddComponent<MeshCollider>();
+        FindObjectOfType<RopeMovement>().rope = this; //inefficient, but easily replaced
     }
 }

@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4177110848317729427}
   - component: {fileID: 4177110848317729426}
   - component: {fileID: 5286503487092709997}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Rope
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -156,6 +156,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pointA: {fileID: 4265443213715013665}
   pointB: {fileID: 5378340879699657952}
+  cable: {fileID: 0}
 --- !u!1 &4268745667010846014
 GameObject:
   m_ObjectHideFlags: 0
@@ -166,7 +167,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5378340879699657952}
   - component: {fileID: 4911672064432687151}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: pointB
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -213,7 +214,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4265443213715013665}
   - component: {fileID: 4966631495762451911}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: pointA
   m_TagString: Untagged
   m_Icon: {fileID: 0}
