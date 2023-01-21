@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Filo;
 
@@ -28,6 +27,6 @@ public class RopeComponent : MonoBehaviour
 
     private IEnumerator FinishSetup() {
         yield return new WaitForEndOfFrame();
-        this.gameObject.AddComponent<BoxCollider>();
+        this.gameObject.AddComponent<MeshCollider>();
     }
 }
