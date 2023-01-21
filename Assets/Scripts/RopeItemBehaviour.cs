@@ -6,25 +6,24 @@ using Filo;
 
 namespace cox.tightrope {
     public class RopeItemBehaviour : ItemBehaviour {
+        [Tooltip("The maximum amount of ropes that can be in play at once.")]
         [SerializeField] int ropeLimit = 1;
+        [Tooltip("The maximum distance away from an anchor point you can be on the first rope connection.")]
         [SerializeField] float maxDistanceFromPlayer = 3;
         [SerializeField] Transform firePoint;
-        [SerializeField] List<AnchorComponent> connectedAnchors = new List<AnchorComponent>();
         bool isConnected = false;
         [SerializeField] Cable ropePrefab;
-        [SerializeField] CablePoint cableAttachPoint;
         Cable rope = null;
         List<Cable> ropes = new List<Cable>();
 
         CableSolver ropeSolver = null;
-
-        GameObject crosshair;
 
         private void Awake() {
             ropeSolver = FindObjectOfType<CableSolver>();
         }
 
         public override void PrimaryFunction(GameObject crosshair) {
+            //Use camera and crosshair raycast for really accurate aiming
             var crosshairPos = Camera.main.ScreenToWorldPoint(new Vector3(crosshair.transform.position.x, crosshair.transform.position.y, 1));
             var distance = Camera.main.transform.forward * 1000;
             RaycastHit hit;
@@ -37,11 +36,9 @@ namespace cox.tightrope {
             }
             FireRope();
         }
-
         public override void SecondaryFunction() {
             DisconnectRope();
         }
-
         private void FireRope() {
 
             RaycastHit hit;
@@ -64,15 +61,11 @@ namespace cox.tightrope {
 
         void AttachRopePart(RaycastHit hit) {
             var anchor = hit.collider.gameObject.GetComponent<AnchorComponent>();
-            anchor.SetAttachPoint(hit.point);
-            connectedAnchors.Add(anchor);
             if (!isConnected) {
                 isConnected = true;
                 //create rope
                 rope = Instantiate(ropePrefab);
-                rope.name = "New Rope!";
-                rope.dynamicSplitMerge = true;
-                Debug.Log(rope.name);
+                rope.name = "rope";
                 ropes.Insert(0, rope);
                 if (ropes.Count > ropeLimit) {
                     //destroy excess ropes
@@ -82,41 +75,18 @@ namespace cox.tightrope {
                     Destroy(lastRope.gameObject);
                     Debug.Log("destroy rope");
                 }
+                //add ropes to solver
                 ropeSolver.cables = ropes.ToArray();
-
-                Cable.Link self = new Cable.Link();
-                self.body = cableAttachPoint;
-                self.type = Cable.Link.LinkType.Attachment;
-                rope.links.Add(self);
-
-                Cable.Link anchorPoint = new Cable.Link();
-                anchorPoint.body = anchor.cablePoint;
-                anchorPoint.type = Cable.Link.LinkType.Attachment;
-                rope.links.Add(anchorPoint);
-
+                //move rope links to desired positions
+                rope.links[0].body.gameObject.transform.position = firePoint.position;
+                rope.links[0].body.gameObject.transform.SetParent(firePoint); //allows rope to follow player position
+                rope.links[1].body.gameObject.transform.position = hit.point;
             }
             else {
                 isConnected = false;
-
-                Cable.Link anchorPointOne = rope.links[1];
-
-                Cable.Link anchorPointTwo = new Cable.Link();
-                anchorPointTwo.body = anchor.cablePoint;
-                anchorPointTwo.type = Cable.Link.LinkType.Attachment;
-
-                ropes.Remove(rope);
-                ropes.TrimExcess();
-                Destroy(rope.gameObject);
-
-                rope = Instantiate(ropePrefab);
-                rope.name = "New Rope!";
-                rope.dynamicSplitMerge = true;
-                ropes.Insert(0, rope);
-
-                rope.links.Add(anchorPointOne);
-                rope.links.Add(anchorPointTwo);
-                ropeSolver.cables = ropes.ToArray();
-                
+                rope.links[0].body.gameObject.transform.position = hit.point;
+                rope.links[0].body.gameObject.transform.SetParent(null);
+                rope = null;
             }
         }
 
@@ -125,8 +95,6 @@ namespace cox.tightrope {
             if (rope == null) return;
             Destroy(rope.gameObject);
             ropes.TrimExcess();
-            connectedAnchors.Clear();
-            connectedAnchors.TrimExcess();
             ropeSolver.cables = ropes.ToArray();
         }
     }

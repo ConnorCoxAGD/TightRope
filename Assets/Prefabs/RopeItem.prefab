@@ -154,7 +154,7 @@ MonoBehaviour:
   firePoint: {fileID: 3452786342577798275}
   connectedAnchors: []
   ropePrefab: {fileID: 4177110848317729425, guid: f2a6d444b163be84b815ad3b97e58587, type: 3}
-  cableAttachPoint: {fileID: 7902478144106634094}
+  cableAttachPoint: {fileID: 3452786342577798275}
 --- !u!114 &7902478144106634094
 MonoBehaviour:
   m_ObjectHideFlags: 0
