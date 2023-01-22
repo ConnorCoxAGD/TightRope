@@ -1147,6 +1147,10 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1486232910130243533, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: movement.enableGroundStick
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1486232910130243533, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: movement.groundLayer.m_Bits
       value: 136
       objectReference: {fileID: 0}

@@ -25,6 +25,15 @@ public class RopeComponent : MonoBehaviour
         StartCoroutine(FinishSetup());
     }
 
+    public Transform OnRopeCameraCheck() {
+        var a = Camera.main.WorldToScreenPoint(pointA.position).z;
+        var b = Camera.main.WorldToScreenPoint(pointB.position).z;
+
+        if(b < 0) { return pointA;}
+        else if(a < 0) { return pointB;}
+        else { return null; }
+    }
+
     private IEnumerator FinishSetup() {
         yield return new WaitForEndOfFrame();
         this.gameObject.AddComponent<MeshCollider>();
