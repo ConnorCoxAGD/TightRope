@@ -6,7 +6,6 @@ using UnityEngine;
 public class GunItemBehaviour : ItemBehaviour
 {
     [SerializeField] GameObject bullet;
-    [SerializeField] float speed;
     [SerializeField] Transform firePoint;
 
     private void OnEnable() {
