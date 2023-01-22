@@ -22,6 +22,11 @@ public class RopeMovement : MonoBehaviour
     public void OnMove(InputValue input) {
         movement = input.Get<Vector2>();
     }
+    public void OnJump() {
+        if (onRope) {
+            controller.Movement.CanMoveAround = true;
+        }
+    }
 
     public bool CheckForRope() {
         return Physics.CheckSphere(new Vector3(controller.Movement.PlayerTransform.position.x, 
@@ -33,23 +38,20 @@ public class RopeMovement : MonoBehaviour
 
     private void Update() {
         onRope = CheckForRope();
+        controller.Movement.CanMoveAround = !onRope;
 
         switch (onRope) {
             case true:
-                controller.Movement.MoveSpeedMultiplier = 0;
-                movement = controller.Movement.SmoothedMovementInput;
                 if(rope.OnRopeCameraCheck() != null) {
                     var speed = movement.y * ropeWalkSpeed * Time.deltaTime;
                     var point = rope.OnRopeCameraCheck().position;
-                    var move = Vector3.MoveTowards(controller.transform.position, new Vector3(point.x, controller.transform.position.y * 2, point.z), speed );
-                    controller.transform.position = move;
+                    var move = Vector3.MoveTowards(controller.transform.position, point, speed);
+                    controller.SetPosition(move); //Gold player made this a real pain for a while, but luckily they included this function.
                     Debug.LogFormat("Speed: {0} || Move: {1} || Controller: {2}", speed, move, controller.transform.position);
                 }
                 
-
                 break;
             case false:
-                controller.Movement.MoveSpeedMultiplier = 1;
                 break;
         }
     }

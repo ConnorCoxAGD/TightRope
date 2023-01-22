@@ -1138,6 +1138,10 @@ PrefabInstance:
       propertyPath: items.Array.data[1]
       value: 
       objectReference: {fileID: -5153268399332978704, guid: f023a3e9c033382478b059285b25f9f7, type: 3}
+    - target: {fileID: 1486232910130243532, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: m_SkinWidth
+      value: 0.02
+      objectReference: {fileID: 0}
     - target: {fileID: 1486232910130243533, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: cam.lookSensitivity.x
       value: 3
@@ -1148,7 +1152,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1486232910130243533, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: movement.enableGroundStick
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1486232910130243533, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: movement.groundLayer.m_Bits
