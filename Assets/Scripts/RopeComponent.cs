@@ -2,8 +2,7 @@ using System.Collections;
 using UnityEngine;
 using Filo;
 
-public class RopeComponent : MonoBehaviour
-{
+public class RopeComponent : MonoBehaviour {
     public Transform pointA, pointB;
     [HideInInspector] public Cable cable;
 
@@ -15,7 +14,6 @@ public class RopeComponent : MonoBehaviour
         pointA.position = parentTransform.position;
         pointA.SetParent(parentTransform);
         pointB.position = connectedPoint;
-
     }
 
     public void AttachSecondPoint(Vector3 connectedPoint) {
@@ -29,8 +27,8 @@ public class RopeComponent : MonoBehaviour
         var a = Camera.main.WorldToScreenPoint(pointA.position).z;
         var b = Camera.main.WorldToScreenPoint(pointB.position).z;
 
-        if(b < 0) { return pointA;}
-        else if(a < 0) { return pointB;}
+        if (b < 0) { return pointA; }
+        else if (a < 0) { return pointB; }
         else { return null; }
     }
 

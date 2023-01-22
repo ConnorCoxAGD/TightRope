@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3396659771929996586}
   - component: {fileID: 8495995809780171926}
   - component: {fileID: 9085593303281927632}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -111,7 +111,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08e9aa4d4aa81e64b994815d6d184376, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cablePoint: {fileID: 0}
 --- !u!54 &9085593303281927632
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -137,7 +136,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5262110168990899754}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Anchor Point
   m_TagString: Untagged
   m_Icon: {fileID: 0}

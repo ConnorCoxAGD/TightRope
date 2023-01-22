@@ -231,6 +231,8 @@ GameObject:
   - component: {fileID: 1486232910130243529}
   - component: {fileID: 3726151381793608710}
   - component: {fileID: 550905393}
+  - component: {fileID: 3307573921440170670}
+  - component: {fileID: 728216956}
   m_Layer: 6
   m_Name: player
   m_TagString: Untagged
@@ -272,7 +274,7 @@ CharacterController:
   m_Radius: 0.5
   m_SlopeLimit: 45
   m_StepOffset: 0.3
-  m_SkinWidth: 0.08
+  m_SkinWidth: 0.02
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &1486232910130243533
@@ -293,7 +295,7 @@ MonoBehaviour:
     rotateCameraOnly: 0
     invertXAxis: 0
     invertYAxis: 0
-    lookSensitivity: {x: 4, y: 4}
+    lookSensitivity: {x: 3, y: 3}
     lookDamping: 0.05
     minimumX: -90
     maximumX: 90
@@ -500,11 +502,11 @@ MonoBehaviour:
       m_RotationOrder: 4
     groundLayer:
       serializedVersion: 2
-      m_Bits: 8
+      m_Bits: 392
     acceleration: 0.1
-    gravity: 15
+    gravity: 12
     airControl: 0.5
-    enableGroundStick: 1
+    enableGroundStick: 0
     groundStick: 10
     groundCheck: 0
     rayAmount: 8
@@ -617,7 +619,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hand: {fileID: 2130958809994530427}
   crosshair: {fileID: 194800012616703967}
-  items: []
+  items:
+  - {fileID: 6728734932842197462, guid: 5d543b434dc2ec6478da22e10d03b6d3, type: 3}
+  - {fileID: -5153268399332978704, guid: f023a3e9c033382478b059285b25f9f7, type: 3}
 --- !u!114 &3726151381793608710
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -735,10 +739,41 @@ MonoBehaviour:
     m_ActionId: cdd0a5c4-cf90-48b2-b055-999f065a2c7e
     m_ActionName: UI/RightClick[/Mouse/rightButton]
   m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: Keyboard
+  m_DefaultControlScheme: 
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &3307573921440170670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1486232910130243522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84619fe3aeba6448abb74c01eb352b10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  plane: 0
+  planeNormal: {x: 0, y: 0, z: 0}
+  freezeRotation: 1
+--- !u!114 &728216956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1486232910130243522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2773566cf043b4642aabf63a64686928, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ropeLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  rope: {fileID: 0}
 --- !u!1 &1486232910331922932
 GameObject:
   m_ObjectHideFlags: 0
@@ -1238,7 +1273,7 @@ Transform:
   m_GameObject: {fileID: 1486232911642641981}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0.845, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.6, y: 1, z: 0.6}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1486232910130243535}

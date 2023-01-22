@@ -13,6 +13,10 @@ namespace cox.tightrope {
         [SerializeField] Transform firePoint;
         bool isConnected = false;
         [SerializeField] RopeComponent ropePrefab;
+        [SerializeField] AudioClip disconnectSound, deploySound;
+        [SerializeField] AudioSource audioSource;
+
+
         RopeComponent activeRope = null;
         List<Cable> ropes = new List<Cable>();
 
@@ -61,6 +65,7 @@ namespace cox.tightrope {
         void AttachRopePart(RaycastHit hit) {
             var anchor = hit.collider.gameObject.GetComponent<AnchorComponent>();
             if (!isConnected) {
+                PlayAudio(deploySound);
                 isConnected = true;
                 //create rope
                 activeRope = Instantiate(ropePrefab);
@@ -80,17 +85,34 @@ namespace cox.tightrope {
                 activeRope.AttachFirstPoint(firePoint, hit.point);
             }
             else {
+                PlayAudio(deploySound);
                 isConnected = false;
                 activeRope.AttachSecondPoint(hit.point);
                 activeRope = null;
             }
         }
 
+        private void Update() {
+            //if (activeRope == null) return;
+            //Debug.Log(Vector3.Distance(firePoint.position, activeRope.pointA.position));
+            if(activeRope != null && Vector3.Distance(firePoint.position, activeRope.pointB.position) > maxDistanceFromPlayer) {
+                DisconnectRope();
+            }
+        }
+
+        void PlayAudio(AudioClip clip) {
+            audioSource.clip = clip;
+            audioSource.Play();
+        }
+
         void DisconnectRope() {
+            PlayAudio(disconnectSound);
+            Debug.Log("Disconnected");
             isConnected = false;
             if (activeRope == null) return;
-            Destroy(activeRope.gameObject);
+            ropes.Remove(activeRope.cable);
             ropes.TrimExcess();
+            Destroy(activeRope.gameObject);
             ropeSolver.cables = ropes.ToArray();
         }
     }
