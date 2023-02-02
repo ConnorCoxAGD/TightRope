@@ -1,32 +1,24 @@
+using Hertzole.GoldPlayer;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraMovement : MonoBehaviour
-{
-    [Header("Camera Controller")]
-    [SerializeField] float obstacleDetectionDistance = 1.5f;
-    bool obstacleFound = false;
-    Transform playerTransform;
-    public void SetPlayerTransform(Transform _playerTransform) {
-        playerTransform = _playerTransform;
-    }
-    private void LateUpdate() {
-        DetectObstacle();
-    }
-    private void DetectObstacle() {
-        if(playerTransform == null) {
-            Debug.LogWarning($"{this.gameObject.name}: {this} has no playerTransform to use for obstacle detection.");
-            return;
+namespace Cox.ControllerProject.GoldPlayerAddons {
+    /// <summary>
+    /// Allows for advanced control of the camera. Works with PlayerControllerExtras.
+    /// </summary>
+    public class CameraMovement : MonoBehaviour {
+        [Header("Camera Controller")]
+        [SerializeField]
+        [Range(0f, 1f)]
+        float ropeBobAmount = 0.5f;
+
+        private void LateUpdate() {
         }
-        RaycastHit hit;
-        if (Physics.Raycast(new Vector3(playerTransform.position.x, transform.position.y, playerTransform.position.z), playerTransform.forward, out hit, obstacleDetectionDistance)) {
-            obstacleFound = true;
-            Debug.Log($"Obstacle detected: {hit.collider.gameObject.name}");
+
+        public void RopeBob() {
+            Vector3 start = transform.position;
+
         }
-        else {
-            obstacleFound = false;
-        }
-        
     }
 }
