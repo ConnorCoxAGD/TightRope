@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 using Filo;
 
-namespace cox.tightrope {
+namespace Cox.ControllerProject.GoldPlayerAddons {
     public class RopeItemBehaviour : ItemBehaviour {
         [Tooltip("The maximum amount of ropes that can be in play at once.")]
         [SerializeField] int ropeLimit = 1;

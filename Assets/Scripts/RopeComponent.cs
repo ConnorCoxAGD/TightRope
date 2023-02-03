@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using Filo;
-namespace cox.ControllerProject.GoldPlayerAddons {
+namespace Cox.ControllerProject.GoldPlayerAddons {
 
     public class RopeComponent : MonoBehaviour {
         public Transform pointA, pointB;

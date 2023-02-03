@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace cox.ControllerProject.GoldPlayerAddons {
+namespace Cox.ControllerProject.GoldPlayerAddons {
     public class InventoryComponent : MonoBehaviour {
         [SerializeField] GameObject hand; //for a place to parent held items.
         [SerializeField] GameObject crosshair;
