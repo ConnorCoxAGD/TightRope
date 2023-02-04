@@ -71,8 +71,8 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
                     Debug.DrawRay(groundHit.point, Vector3.up, Color.green);
                     Debug.Log($"Height should be set to {Vector3.Distance(groundHit.point, ceilingHit.point)}.");
                     var height = Vector3.Distance(groundHit.point, ceilingHit.point) - 0.35f;
-                    if (height > 0.81f) return height;
-                    return 0.81f;
+                    if (height > 0.80f) return height;
+                    return 0.80f;
                 }
                 Debug.Log($"No Ceiling: Height should be set to {presetCrouchHeight}.");
                 return presetCrouchHeight;

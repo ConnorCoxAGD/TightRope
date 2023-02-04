@@ -9,9 +9,10 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
     /// </summary>
     public class CameraMovement : MonoBehaviour {
         [Header("Camera Controller")]
-        [SerializeField]
-        [Range(0f, 1f)]
+        [SerializeField] [Range(0f, 1f)]
         float ropeBobAmount = 0.5f;
+        [SerializeField]
+        Transform head;
 
         private void LateUpdate() {
         }
