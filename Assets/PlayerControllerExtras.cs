@@ -35,18 +35,20 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             if (cameraMovement == null) {
                 Debug.LogWarning($"No CameraMovement component found for {gameObject.name}{this}.");
             }
-            goldPlayerController.Movement.OnBeginCrouch += Crouch;
         }
         private void OnDestroy() {
-            goldPlayerController.Movement.OnBeginCrouch -= Crouch;
         }
 
         // Update is called once per frame
         void LateUpdate() {
             goldPlayerController.Controller.center = new Vector3(0, goldPlayerController.Controller.height / 2, 0);
+
+            if (goldPlayerController.Movement.IsCrouching) {
+                StartCoroutine(CheckCrouch(0.25f));
+            }
         }
 
-        public void Crouch() {
+        public void OnCrouch() {
             if (DetectObstacles()) {
                 goldPlayerController.Movement.CrouchHeight = FindCrouchHeight();
                 Debug.Log($"CrouchHeight set to {goldPlayerController.Movement.CrouchHeight}");
@@ -71,6 +73,7 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
                     Debug.DrawRay(groundHit.point, Vector3.up, Color.green);
                     Debug.Log($"Height should be set to {Vector3.Distance(groundHit.point, ceilingHit.point)}.");
                     var height = Vector3.Distance(groundHit.point, ceilingHit.point) - 0.35f;
+                    goldPlayerController.Movement.crouchCameraPosition = goldPlayerController.Camera.CameraHead.localPosition.y - (goldPlayerController.Controller.height - goldPlayerController.Movement.CrouchHeight);
                     if (height > 0.80f) return height;
                     return 0.80f;
                 }
@@ -78,6 +81,15 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
                 return presetCrouchHeight;
             }
             return presetCrouchHeight;
+        }
+
+        void RecalculateCameraCrouchHeight() {
+
+        }
+
+        private IEnumerator CheckCrouch(float value) {
+            yield return new WaitForSeconds(value);
+            FindCrouchHeight();
         }
     }
 }
