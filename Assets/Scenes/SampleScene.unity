@@ -2972,7 +2972,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1486232910130243532, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: m_SkinWidth
-      value: 0.01
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 1486232910130243532, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: m_StepOffset

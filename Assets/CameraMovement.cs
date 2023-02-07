@@ -9,17 +9,30 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
     /// </summary>
     public class CameraMovement : MonoBehaviour {
         [Header("Camera Controller")]
-        [SerializeField] [Range(0f, 1f)]
-        float ropeBobAmount = 0.5f;
         [SerializeField]
         Transform head;
+        GoldPlayerController goldPlayerController;
+        float crouchLerp;
+        float crouchHeight;
+
+        public void Initialize(GoldPlayerController controller) {
+            goldPlayerController = controller;
+            crouchLerp = goldPlayerController.Movement.CrouchTime;
+            crouchHeight = goldPlayerController.Movement.CrouchHeight;
+        }
 
         private void LateUpdate() {
+            if (goldPlayerController.Movement.IsCrouching) {
+                //adjust head position to match the appropriate height.
+            }
         }
 
         public void RopeBob() {
-            Vector3 start = transform.position;
+            //camera movement when landing on a rope
+        }
 
+        public void Crouch(float _crouchHeight) {
+            crouchHeight = _crouchHeight;
         }
     }
 }

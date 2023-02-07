@@ -16,8 +16,8 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
     public class PlayerControllerExtras : MonoBehaviour {
         [Header("Obstacle Detection")]
         [Tooltip("Distance from the player that an 'obstacle' must be to be interacted with. Used for crouching and mantling.")]
-        [SerializeField] float obstacleDetectionDistance = 1.5f;
-        float modifiedCrouchHeight, presetCrouchHeight;
+        [SerializeField] float obstacleDetectionDistance = 1.5f, crouchHeightDetectionDistance = 1.0f;
+        float modifiedCrouchHeight, crouchMax;
         GoldPlayerController goldPlayerController; //#Critical: required for player movement.
         CameraMovement cameraMovement;
 
@@ -29,12 +29,14 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
                 Debug.LogError($"No GoldPlayerController component found for {gameObject.name}{this}.\nThis is required for player control.");
                 return;
             }
-            presetCrouchHeight = goldPlayerController.Movement.CrouchHeight;
+            crouchMax = goldPlayerController.Movement.CrouchHeight;
             modifiedCrouchHeight = goldPlayerController.Movement.CrouchHeight;
             cameraMovement = GetComponentInChildren<CameraMovement>();
             if (cameraMovement == null) {
                 Debug.LogWarning($"No CameraMovement component found for {gameObject.name}{this}.");
+                return;
             }
+            cameraMovement.Initialize(goldPlayerController);
         }
         private void OnDestroy() {
         }
@@ -44,17 +46,13 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             goldPlayerController.Controller.center = new Vector3(0, goldPlayerController.Controller.height / 2, 0);
 
             if (goldPlayerController.Movement.IsCrouching) {
-                StartCoroutine(CheckCrouch(0.25f));
+                StartCoroutine(CheckCrouch(0.5f));
             }
         }
 
         public void OnCrouch() {
-            if (DetectObstacles()) {
-                goldPlayerController.Movement.CrouchHeight = FindCrouchHeight();
-                Debug.Log($"CrouchHeight set to {goldPlayerController.Movement.CrouchHeight}");
-            }
-
-
+            goldPlayerController.Movement.CrouchHeight = FindCrouchHeight();
+            Debug.Log($"CrouchHeight set to {goldPlayerController.Movement.CrouchHeight}");
         }
 
         bool DetectObstacles() {
@@ -67,29 +65,43 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             return false;
         }
         float FindCrouchHeight() {
-            if (Physics.Raycast(new Vector3(transform.position.x, transform.position.y + goldPlayerController.Controller.height / 2, transform.position.z), transform.forward + Vector3.down / 2, out RaycastHit groundHit)) {
-                Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + goldPlayerController.Controller.height / 2, transform.position.z), transform.forward + Vector3.down / 2, Color.red);
-                if (Physics.Raycast(groundHit.point, Vector3.up, out RaycastHit ceilingHit, presetCrouchHeight)) {
-                    Debug.DrawRay(groundHit.point, Vector3.up, Color.green);
-                    Debug.Log($"Height should be set to {Vector3.Distance(groundHit.point, ceilingHit.point)}.");
-                    var height = Vector3.Distance(groundHit.point, ceilingHit.point) - 0.35f;
-                    goldPlayerController.Movement.crouchCameraPosition = goldPlayerController.Camera.CameraHead.localPosition.y - (goldPlayerController.Controller.height - goldPlayerController.Movement.CrouchHeight);
-                    if (height > 0.80f) return height;
-                    return 0.80f;
+            Vector3 heightCheckPosition = transform.localPosition + transform.forward * crouchHeightDetectionDistance;
+            Debug.DrawRay(heightCheckPosition, Vector3.up, Color.green, 3f);
+            if (Physics.Raycast(heightCheckPosition, Vector3.up, out RaycastHit ceilingHit, crouchMax)) {
+                var height = Vector3.Distance(heightCheckPosition, ceilingHit.point) - goldPlayerController.Controller.skinWidth;
+                //Debug.Log($"Height should be set to {height}.");
+                float playerCeiling = goldPlayerController.Movement.CrouchHeight;
+                if(height > goldPlayerController.Movement.CrouchHeight) {
+                    playerCeiling = CheckCeiling();
                 }
-                Debug.Log($"No Ceiling: Height should be set to {presetCrouchHeight}.");
-                return presetCrouchHeight;
+                if(height > playerCeiling && height > 0.80f) {
+                    return playerCeiling;
+                }
+                
+                if (height > 0.80f) return height;
+                return 0.80f;
             }
-            return presetCrouchHeight;
+            return crouchMax;
         }
-
+        float CheckCeiling() {
+            LayerMask layerMask = 1<<6;
+            Debug.Log($"Layermask: {layerMask.value}");
+            Debug.DrawRay(transform.localPosition, Vector3.up, Color.magenta, 2f);
+            if (Physics.Raycast(transform.localPosition, Vector3.up, out RaycastHit ceilingHit, 5, ~layerMask)){
+                float dist = Vector3.Distance(transform.localPosition, ceilingHit.point) - goldPlayerController.Controller.skinWidth;
+                Debug.Log($"Ceiling height is {dist} on object {ceilingHit.collider.name}");
+                return dist;
+            }
+            Debug.Log("No Ceiling");
+            return goldPlayerController.Movement.CrouchHeight;
+        }
         void RecalculateCameraCrouchHeight() {
 
         }
 
         private IEnumerator CheckCrouch(float value) {
-            yield return new WaitForSeconds(value);
-            FindCrouchHeight();
+            yield return new WaitForSecondsRealtime(value);
+            goldPlayerController.Movement.CrouchHeight = FindCrouchHeight();
         }
     }
 }
