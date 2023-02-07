@@ -157,7 +157,7 @@ BoxCollider:
   m_GameObject: {fileID: 6728734932059443019}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
@@ -209,8 +209,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Pistol
   description: It fires ouch pellets.
+  usesCrosshair: 1
   bullet: {fileID: 314618178848815680, guid: d2e2ac7bf1a877d479e5caece7efd157, type: 3}
-  speed: 0
   firePoint: {fileID: 7801961489189978750}
 --- !u!1 &6728734932883897171
 GameObject:
@@ -305,7 +305,7 @@ BoxCollider:
   m_GameObject: {fileID: 6728734932883897171}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
