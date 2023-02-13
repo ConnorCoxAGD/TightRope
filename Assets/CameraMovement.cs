@@ -17,7 +17,7 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
 
         public void Initialize(GoldPlayerController controller) {
             goldPlayerController = controller;
-            crouchTime = goldPlayerController.Movement.CrouchTime * 17;
+            crouchTime = goldPlayerController.Movement.CrouchTime * 5;
             defaultCrouchHeight = goldPlayerController.Movement.CrouchHeight;
             //Programatically setup the Head Parent
             head = new GameObject("HeadParent").transform;
@@ -29,7 +29,6 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
 
         private void LateUpdate() {
             if (goldPlayerController.Movement.IsCrouching) {
-                
                 var newPos = new Vector3(head.transform.localPosition.x, defaultCrouchHeight - (defaultCrouchHeight - crouchHeight), head.transform.localPosition.z);
                 head.transform.localPosition = Vector3.MoveTowards(head.transform.localPosition, newPos, crouchTime * Time.deltaTime);
             }

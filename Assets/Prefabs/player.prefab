@@ -275,7 +275,7 @@ CharacterController:
   m_Radius: 0.5
   m_SlopeLimit: 45
   m_StepOffset: 0.3
-  m_SkinWidth: 0.02
+  m_SkinWidth: 0.03
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &1486232910130243533
@@ -297,7 +297,7 @@ MonoBehaviour:
     invertXAxis: 0
     invertYAxis: 0
     lookSensitivity: {x: 3, y: 3}
-    lookDamping: 0.05
+    lookDamping: 0.025
     minimumX: -90
     maximumX: 90
     enableZooming: 0
@@ -443,14 +443,14 @@ MonoBehaviour:
     airJumpTime: 0.1
     airJumpsAmount: 0
     allowAirJumpDirectionChange: 1
-    canCrouch: 0
+    canCrouch: 1
     crouchToggleMode: 0
     crouchSpeeds:
       forwardSpeed: 2
       sidewaysSpeed: 1.5
       backwardsSpeed: 1
     crouchJumping: 0
-    crouchHeight: 1.25
+    crouchHeight: 1.5
     crouchTime: 0.25
     crouchCurve:
       serializedVersion: 2
@@ -787,7 +787,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43dafe34efecb7c4c9ba598c8cf8e128, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  obstacleDetectionDistance: 1.5
+  crouchHeightDetectionDistance: 1
 --- !u!1 &1486232910331922932
 GameObject:
   m_ObjectHideFlags: 0
@@ -815,7 +815,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1486232910331922932}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.029000044, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -885,7 +885,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afe37690b03b94e4299bf956d7bcf259, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ropeBobAmount: 0.5
 --- !u!1 &1486232910403506832
 GameObject:
   m_ObjectHideFlags: 0
@@ -1141,7 +1140,7 @@ SphereCollider:
   m_GameObject: {fileID: 1486232911008776278}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
@@ -1395,7 +1394,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1486232911692677708}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.282, z: 0}
+  m_LocalPosition: {x: 0, y: 1.778, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
