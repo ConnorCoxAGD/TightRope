@@ -2963,7 +2963,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1486232910130243535, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 11.69
+      value: 7.7
       objectReference: {fileID: 0}
     - target: {fileID: 1486232910130243535, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2971,23 +2971,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1486232910130243535, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 15.68
       objectReference: {fileID: 0}
     - target: {fileID: 1486232910130243535, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7071096
       objectReference: {fileID: 0}
     - target: {fileID: 1486232910130243535, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1486232910130243535, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.707104
       objectReference: {fileID: 0}
     - target: {fileID: 1486232910130243535, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1486232910130243535, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -2995,10 +2995,70 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1486232910130243535, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 1486232910130243535, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5030091176173109278, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: mantleCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5030091176173109278, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: mantleCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5030091176173109278, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: mantleCurve.m_Curve.Array.data[2].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5030091176173109278, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: mantleCurve.m_Curve.Array.data[0].value
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5030091176173109278, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: mantleCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5030091176173109278, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: mantleCurve.m_Curve.Array.data[2].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5030091176173109278, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: mantleCurve.m_Curve.Array.data[0].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5030091176173109278, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: mantleCurve.m_Curve.Array.data[1].inSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5030091176173109278, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: mantleCurve.m_Curve.Array.data[0].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5030091176173109278, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: mantleCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5030091176173109278, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: mantleCurve.m_Curve.Array.data[1].outSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5030091176173109278, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: mantleCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5030091176173109278, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: mantleCurve.m_Curve.Array.data[1].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5030091176173109278, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: mantleCurve.m_Curve.Array.data[0].tangentMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5030091176173109278, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: mantleCurve.m_Curve.Array.data[1].tangentMode
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

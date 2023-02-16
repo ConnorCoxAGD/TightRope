@@ -1,30 +1,39 @@
 using Hertzole.GoldPlayer;
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using TMPro;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.HID;
-using UnityEngine.PlayerLoop;
-using UnityEngine.Windows;
 
 namespace Cox.ControllerProject.GoldPlayerAddons {
+
+    public enum MovementStates {
+        Default,
+        Mantling,
+        Crouching,
+    }
+
     /// <summary>
     /// Add-on component that allows creation of advanced controls for the Gold Player Character Controller.
     /// </summary>
     public class PlayerControllerExtras : MonoBehaviour {
-        [Header("Obstacle Detection")]
-        [Tooltip("Distance from the player that an 'obstacle' must be to be interacted with. Used for crouching and mantling.")]
-        [SerializeField] 
-        float /*obstacleDetectionDistance = 1.5f,*/ crouchHeightDetectionDistance = 1.0f;
-        float crouchMax, crouchOffset = .25f, currentCrouchHeight, crouchTime;
-        GoldPlayerController goldPlayerController; //#Critical: required for player movement.
+        //Editor input variables
+        [SerializeField]
+        private MovementStates movementState;
+        [SerializeField]
+        [Tooltip("")]
+        float mantleDistance = 1.5f;
+        [SerializeField]
+        [Tooltip("")]
+        float mantleHeight = 2.5f;
+        [SerializeField]
+        [Tooltip("")]
+        float crouchHeightDetectionDistance = 1.0f;
+        //Automated variables
+        //#Critical: required for player movement.
+        GoldPlayerController goldPlayerController; 
+        float crouchOffset = .25f, crouchMax, currentCrouchHeight, crouchTime;
         CameraMovement cameraMovement;
+        Vector3 goToPosition = Vector3.zero;
 
-        Vector2 playerMovement;
-        // Start is called before the first frame update
+
         void Awake() {
             goldPlayerController = GetComponent<GoldPlayerController>();
             if (goldPlayerController == null) {
@@ -50,41 +59,54 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
 
             if (goldPlayerController.Movement.IsCrouching) {
                 cameraMovement.Crouched(goldPlayerController.Movement.CrouchHeight);
-                StartCoroutine(CheckCrouch(1f));
+                OnCrouch();
             }
         }
+        private void Update() {
+            switch (movementState) {
+                case MovementStates.Mantling:
+                    //goldPlayerController.Movement.CanMoveAround = false;
+                    Vector3 movement = Vector3.Slerp(transform.position, goToPosition, 3 * Time.deltaTime);
+                   //movement.x = Mathf.Lerp(transform.position.x, goToPosition.x, mantleCurve.Evaluate(transform.position.x));
+                    movement.y = Mathf.Lerp(transform.position.y, goToPosition.y, 10 * Time.deltaTime);
+                    //movement.z = Mathf.Lerp(transform.position.z, goToPosition.z, mantleCurve.Evaluate(transform.position.z));
+
+                    goldPlayerController.SetPosition(movement);
+                    if(Vector3.Distance(transform.position, goToPosition) <= 0.3f){
+                        movementState = MovementStates.Default;
+                    }
+                    break;
+                case MovementStates.Default:
+                    goldPlayerController.Movement.CanMoveAround = true;
+                    goToPosition = Vector3.zero;
+                    break;
+
+            }
+        }
+
+        #region Crouching
 
         public void OnCrouch() {
             
             currentCrouchHeight = FindCrouchHeight();
             //goldPlayerController.Movement.CrouchHeight = currentCrouchHeight;
-            Debug.Log($"CrouchHeight set to {currentCrouchHeight}");
+            //Debug.Log($"CrouchHeight set to {currentCrouchHeight}");
         }
-
-        /*bool DetectObstacles() {
-            RaycastHit hit;
-            if (Physics.SphereCast(new Vector3(transform.position.x, transform.position.y + goldPlayerController.Controller.height, transform.position.z), 1, transform.forward, out hit, obstacleDetectionDistance)) {
-                //Debug.Log($"Obstacle detected: {hit.collider.gameObject.name}");
-                return true;
-
-            }
-            return false;
-        }*/
 
         float FindCrouchHeight() {
             Vector3 heightCheckPosition = transform.localPosition + transform.forward * crouchHeightDetectionDistance;
-            Debug.DrawRay(heightCheckPosition, Vector3.up *1.4f, Color.green, .1f);
+            Debug.DrawRay(heightCheckPosition, Vector3.up *1.4f, Color.green);
             float playerCeiling = CheckCeiling();
             if(playerCeiling != currentCrouchHeight) {
-                Debug.Log($"Ceiling height changed. {playerCeiling} != {currentCrouchHeight}");
+                //Debug.Log($"Ceiling height changed. {playerCeiling} != {currentCrouchHeight}");
                 if (Physics.Raycast(heightCheckPosition, Vector3.up, out RaycastHit ceilingHit, crouchMax)) {
                     var height = Vector3.Distance(heightCheckPosition, ceilingHit.point) - goldPlayerController.Controller.skinWidth - crouchOffset;
-                    Debug.Log($"New height({height}) found.");
+                    //Debug.Log($"New height({height}) found.");
 
                     if (height > currentCrouchHeight) {
-                        Debug.Log("Projected height greater than current crouch height.");
+                        //Debug.Log("Projected height greater than current crouch height.");
                         if (height > playerCeiling) {
-                            Debug.Log("Height greater than current ceiling. Maintain height.");
+                            //Debug.Log("Height greater than current ceiling. Maintain height.");
                             return playerCeiling;
                         }
                     }
@@ -113,9 +135,44 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             return currentCrouchHeight;
         }
 
-        private IEnumerator CheckCrouch(float value) {
-            yield return new WaitForSecondsRealtime(value);
-            OnCrouch();
+        #endregion
+
+        #region Mantling
+
+        void OnJump() {
+            if (!goldPlayerController.Movement.IsCrouching) {
+                if (!ObstacleCheck()) {
+                    MantleCheck();
+                }
+            }
         }
+
+        bool ObstacleCheck() {
+            LayerMask layerMask = 1 << 6;
+            Vector3 startPoint = transform.localPosition + (transform.up * mantleHeight);
+            if(!Physics.Raycast(startPoint, transform.forward, mantleDistance + 0.5f)) {
+                return false;
+            }
+            return true;
+        }
+
+        void MantleCheck() {
+            //point a raycast down towards a ground.
+            LayerMask layerMask = 1<<6;
+            Vector3 startPoint = transform.localPosition + (transform.forward * mantleDistance) + (transform.up * mantleHeight);
+            Debug.DrawRay(startPoint, Vector3.down * 1.5f, Color.white, 1f, true);
+            if (Physics.SphereCast(startPoint, .5f, Vector3.down, out RaycastHit hit, mantleHeight - 0.5f, ~layerMask, QueryTriggerInteraction.Ignore)) {
+                goToPosition = hit.point;
+                movementState = MovementStates.Mantling;
+            }
+        }
+
+        private void OnDrawGizmos() {
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawSphere(goToPosition, .2f);
+        }
+
+
+        #endregion
     }
 }

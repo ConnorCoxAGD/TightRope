@@ -17,7 +17,7 @@ public class GunItemBehaviour : ItemBehaviour
         RaycastHit hit;
         Physics.Raycast(crosshairPos, distance, out hit);
         if (hit.collider) {
-            Debug.LogFormat("Hit! Point is {0} distance.", Vector3.Distance(transform.position, hit.transform.position));
+            //Debug.LogFormat("Hit! Point is {0} distance.", Vector3.Distance(transform.position, hit.transform.position));
             firePoint.LookAt(hit.point);
         }
         else {

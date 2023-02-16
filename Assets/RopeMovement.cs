@@ -54,7 +54,7 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
 
         private void Update() {
             onRope = CheckForRope();
-            controller.Movement.CanMoveAround = !onRope;
+            //controller.Movement.CanMoveAround = !onRope;
 
             switch (onRope) {
                 case true:
