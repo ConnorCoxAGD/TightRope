@@ -15,8 +15,7 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
     /// </summary>
     public class PlayerControllerExtras : MonoBehaviour {
         //Editor input variables
-        [SerializeField]
-        private MovementStates movementState;
+        public MovementStates movementState;
         [SerializeField]
         [Tooltip("")]
         float mantleDistance = 1.5f;
@@ -28,7 +27,8 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         float crouchHeightDetectionDistance = 1.0f;
         //Automated variables
         //#Critical: required for player movement.
-        GoldPlayerController goldPlayerController; 
+        [HideInInspector]
+        public GoldPlayerController goldPlayerController; 
         float crouchOffset = .25f, crouchMax, currentCrouchHeight, crouchTime;
         CameraMovement cameraMovement;
         Vector3 goToPosition = Vector3.zero;
@@ -48,7 +48,7 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
                 Debug.LogWarning($"No CameraMovement component found for {gameObject.name}{this}.");
                 return;
             }
-            cameraMovement.Initialize(goldPlayerController);
+            cameraMovement.Initialize(this);
         }
 
         // Update is called once per frame
@@ -74,6 +74,7 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
                     goldPlayerController.SetPosition(movement);
                     if(Vector3.Distance(transform.position, goToPosition) <= 0.3f){
                         movementState = MovementStates.Default;
+
                     }
                     break;
                 case MovementStates.Default:
