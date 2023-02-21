@@ -8,22 +8,18 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
     /// Allows for advanced control of the camera. Works with PlayerControllerExtras.
     /// </summary>
     public class CameraMovement : MonoBehaviour {
-        [SerializeField]
-        AnimationCurve mantleMotion;
-        [SerializeField]
-        Vector3 mantleOffsets = Vector3.zero;
-        [SerializeField]
-        float mantleLerpTime = 1f;
-
-        float timer = 0f;
+  
         PlayerControllerExtras controllerExtras;
-        Transform head; //This is the parent of the camera head. This allows us to move the head alongside the Gold Players movement.
+        Transform head; //This is the parent of the camera head. This allows us to TRANSLATE the head alongside the Gold Players movement. DO NOT USE TO ROTATE
+        Animation anim;
+        [SerializeField]
+        AnimationClip mantleAnim;
+        [SerializeField]
+        AnimationCurve curve = new AnimationCurve();
         float crouchTime;
         float defaultCrouchHeight;
         float startingHeight;
         float crouchHeight;
-        bool isMantling = false;
-        Vector3 mantleTarget = Vector3.zero;
 
         public void Initialize(PlayerControllerExtras controller) {
             controllerExtras = controller;
@@ -37,6 +33,16 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
 
             controllerExtras.goldPlayerController.Camera.CameraHead.SetParent(head);
             startingHeight = head.localPosition.y;
+            anim = gameObject.AddComponent<Animation>();
+            mantleAnim = new AnimationClip();
+            mantleAnim.legacy = true;
+            anim.AddClip(mantleAnim, mantleAnim.name);
+            anim.clip = mantleAnim;
+            mantleAnim.SetCurve("", typeof(Transform), "Rotation.x", curve);
+            anim.Play(mantleAnim.name);
+           
+            
+
         }
 
         private void LateUpdate() {
@@ -54,6 +60,10 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
                 case MovementStates.Mantling:
 
                     break;
+            }
+
+            if (!anim.isPlaying) {
+                anim.Play(mantleAnim.name);
             }
             
         }
