@@ -1,6 +1,3 @@
-using Hertzole.GoldPlayer;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Cox.ControllerProject.GoldPlayerAddons {
@@ -10,12 +7,9 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
     public class CameraMovement : MonoBehaviour {
   
         PlayerControllerExtras controllerExtras;
-        Transform head; //This is the parent of the camera head. This allows us to TRANSLATE the head alongside the Gold Players movement. DO NOT USE TO ROTATE
-        Animation anim;
+        Transform headParent; //This is the parent of the camera head. This allows us to TRANSLATE the head alongside the Gold Players movement. DO NOT USE TO ROTATE
         [SerializeField]
-        AnimationClip mantleAnim;
-        [SerializeField]
-        AnimationCurve curve = new AnimationCurve();
+        AnimationCurve curve;
         float crouchTime;
         float defaultCrouchHeight;
         float startingHeight;
@@ -26,44 +20,30 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             crouchTime = controllerExtras.goldPlayerController.Movement.CrouchTime * 5;
             defaultCrouchHeight = controllerExtras.goldPlayerController.Movement.CrouchHeight;
             //Programatically setup the Head Parent
-            head = new GameObject("HeadParent").transform;
-            head.rotation = Quaternion.identity;
-            head.SetParent(controllerExtras.goldPlayerController.gameObject.transform);
-            head.position = controllerExtras.goldPlayerController.Camera.CameraHead.position;
+            headParent = new GameObject("HeadParent").transform;
+            headParent.rotation = Quaternion.identity;
+            headParent.SetParent(controllerExtras.goldPlayerController.gameObject.transform);
+            headParent.position = controllerExtras.goldPlayerController.Camera.CameraHead.position;
 
-            controllerExtras.goldPlayerController.Camera.CameraHead.SetParent(head);
-            startingHeight = head.localPosition.y;
-            anim = gameObject.AddComponent<Animation>();
-            mantleAnim = new AnimationClip();
-            mantleAnim.legacy = true;
-            anim.AddClip(mantleAnim, mantleAnim.name);
-            anim.clip = mantleAnim;
-            mantleAnim.SetCurve("", typeof(Transform), "Rotation.x", curve);
-            anim.Play(mantleAnim.name);
-           
-            
-
+            controllerExtras.goldPlayerController.Camera.CameraHead.SetParent(headParent);
+            startingHeight = headParent.localPosition.y;
         }
 
         private void LateUpdate() {
             switch (controllerExtras.movementState) {
                 case MovementStates.Default:
-                    if (head.transform.localPosition.y < startingHeight) {
-                        var upPos = new Vector3(head.transform.localPosition.x, startingHeight, head.transform.localPosition.z);
-                        head.transform.localPosition = Vector3.MoveTowards(head.transform.localPosition, upPos, crouchTime * Time.deltaTime);
+                    if (headParent.transform.localPosition.y < startingHeight) {
+                        var upPos = new Vector3(headParent.transform.localPosition.x, startingHeight, headParent.transform.localPosition.z);
+                        headParent.transform.localPosition = Vector3.MoveTowards(headParent.transform.localPosition, upPos, crouchTime * Time.deltaTime);
                     }
                     break;
                 case MovementStates.Crouching:
-                    var newPos = new Vector3(head.transform.localPosition.x, defaultCrouchHeight - (defaultCrouchHeight - crouchHeight), head.transform.localPosition.z);
-                    head.transform.localPosition = Vector3.MoveTowards(head.transform.localPosition, newPos, crouchTime * Time.deltaTime);
+                    var newPos = new Vector3(headParent.transform.localPosition.x, defaultCrouchHeight - (defaultCrouchHeight - crouchHeight), headParent.transform.localPosition.z);
+                    headParent.transform.localPosition = Vector3.MoveTowards(headParent.transform.localPosition, newPos, crouchTime * Time.deltaTime);
                     break;
                 case MovementStates.Mantling:
 
                     break;
-            }
-
-            if (!anim.isPlaying) {
-                anim.Play(mantleAnim.name);
             }
             
         }
@@ -73,9 +53,9 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         }
 
         private void OnDrawGizmos() {
-            if (head == null) return;
+            if (headParent == null) return;
             Gizmos.color = Color.yellow;
-            Gizmos.DrawSphere(head.position, .5f);
+            Gizmos.DrawSphere(headParent.position, .5f);
         }
     }
 }
