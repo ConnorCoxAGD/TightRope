@@ -22,7 +22,7 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             //Programatically setup the Head Parent
             headParent = new GameObject("HeadParent").transform;
             headParent.rotation = Quaternion.identity;
-            headParent.SetParent(controllerExtras.goldPlayerController.gameObject.transform);
+            headParent.SetParent(controllerExtras.goldPlayerController.Camera.CameraHead.parent);
             headParent.position = controllerExtras.goldPlayerController.Camera.CameraHead.position;
 
             controllerExtras.goldPlayerController.Camera.CameraHead.SetParent(headParent);
