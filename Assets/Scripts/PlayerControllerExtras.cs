@@ -1,35 +1,31 @@
 using Hertzole.GoldPlayer;
 using System.Collections;
+using UnityEditorInternal;
 using UnityEngine;
 
 namespace Cox.ControllerProject.GoldPlayerAddons {
-
-    public enum MovementStates {
-        Grounded,
-        Mantling,
-        Crouching,
-        Jumping,
-        Falling,
-        LongFalling,
-        Landing
-    }
-
     /// <summary>
     /// Add-on component that allows creation of advanced controls for the Gold Player Character Controller.
     /// </summary>
     [RequireComponent(typeof(CameraMovement))]
     public class PlayerControllerExtras : MonoBehaviour {
         //Editor input variables
-        public MovementStates movementState;
         [SerializeField]
-        [Tooltip("")]
+        [Tooltip("The distance away a surface must be before it's able to be mantled.")]
         float mantleDistance = 1.5f;
         [SerializeField]
-        [Tooltip("")]
+        [Tooltip("The maximum height from the player's feet a surface can be before it can't be mantled.")]
         float mantleHeight = 2.5f;
         [SerializeField]
-        [Tooltip("")]
+        [Tooltip("Determines how far away the player reacts to changes in ceiling height while crouching.")]
         float crouchHeightDetectionDistance = 1.0f;
+        [SerializeField]
+        [Tooltip("The time is takes until the players falling state changes to long fall.")]
+        float timeUntilLongFall = 1f;
+        [SerializeField]
+        [Tooltip("The amount of time 'isHardLanding' is true after landing on the groun.")]
+        float hardLandingTime = 0.25f;
+
         //Automated variables
         //#Critical: required for player movement.
         [HideInInspector]
@@ -37,8 +33,14 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         float crouchOffset = .25f, crouchMax, currentCrouchHeight, crouchTime;
         CameraMovement cameraMovement;
         Vector3 goToPosition = Vector3.zero;
+        [HideInInspector]
+        public bool hardLanding = false,
+            isMantling = false,
+            isLongFalling = false,
+            isCrouching = false;
 
-        bool hardLanding = false;
+        bool fallCheckStarted = false;
+        Coroutine longFallTimer;
 
 
         void Awake() {
@@ -58,43 +60,84 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             cameraMovement.Initialize(this);
         }
 
-        // Update is called once per frame
+        // On Late update because regular update intereferes with GoldPlayer. Ideally this can be fixed eventually.
         void LateUpdate() {
             goldPlayerController.Controller.center = new Vector3(0, goldPlayerController.Controller.height / 2, 0);
-
             goldPlayerController.Movement.CrouchHeight = Mathf.MoveTowards(goldPlayerController.Movement.CrouchHeight, currentCrouchHeight, crouchTime * Time.deltaTime);
 
             if (goldPlayerController.Movement.IsCrouching) {
                 cameraMovement.Crouched(goldPlayerController.Movement.CrouchHeight);
+                isCrouching = true;
                 OnCrouch();
+            }
+            else {
+                isCrouching = false;
             }
         }
         private void Update() {
-            ControlMovement();
+            MantleControl();
+            if (!goldPlayerController.Movement.IsGrounded) {
+                CheckFall();
+            }
+            else {
+                StopCoroutine(longFallTimer);
+                if (isLongFalling) {
+                    HardLanding();
+                }
+                fallCheckStarted = false;
+            }
+            
+        }
+        private void HardLanding() {
+            hardLanding = true;
+            isLongFalling = false;
+            StartCoroutine(HardLandingTimer());
+            cameraMovement.HardLanding();
         }
 
-        private void ControlMovement() {
-            switch (movementState) {
-                case MovementStates.Mantling:
-                    //goldPlayerController.Movement.CanMoveAround = false;
-                    var stickValue = goldPlayerController.Movement.GroundStick;
-                    goldPlayerController.Movement.GroundStick = 100;
-                    Vector3 movement = Vector3.Slerp(transform.position, goToPosition, 6 * Time.deltaTime);
-                    movement.y = Mathf.Lerp(transform.position.y, goToPosition.y, 20 * Time.deltaTime);
+        private void CheckFall() {
+            if (fallCheckStarted) return;
+            fallCheckStarted = true;
+            longFallTimer = StartCoroutine(LongFallTimer());
+            
 
-                    goldPlayerController.SetPosition(movement);
-                    if (Vector3.Distance(transform.position, goToPosition) <= 0.3f) {
-                        movementState = MovementStates.Grounded;
-                        cameraMovement.ReturnToZero();
-                        goldPlayerController.Movement.GroundStick = stickValue;
+        }
 
-                    }
-                    break;
-                case MovementStates.Grounded:
+        private IEnumerator LongFallTimer() {
+            yield return new WaitForSeconds(timeUntilLongFall);
+            if (goldPlayerController.Movement.IsGrounded) yield break;
+            isLongFalling = true;
+
+        }
+
+        private IEnumerator HardLandingTimer() {
+            yield return new WaitForSecondsRealtime(hardLandingTime);
+            hardLanding = false;
+        }
+
+
+        private void MantleControl() {
+            if (isMantling) {
+                //goldPlayerController.Movement.CanMoveAround = false;
+                var stickValue = goldPlayerController.Movement.GroundStick;
+                goldPlayerController.Movement.GroundStick = 100;
+                Vector3 movement = Vector3.Slerp(transform.position, goToPosition, 6 * Time.deltaTime);
+                movement.y = Mathf.Lerp(transform.position.y, goToPosition.y, 20 * Time.deltaTime);
+                StopCoroutine(longFallTimer);
+                isLongFalling = false;
+                hardLanding = false;
+
+                goldPlayerController.SetPosition(movement);
+                if (Vector3.Distance(transform.position, goToPosition) <= 0.3f) {
+                    isMantling = false;
+                    cameraMovement.ReturnToZero();
+                    goldPlayerController.Movement.GroundStick = stickValue;
+                }
+                return;
+            }
+            else {
                     goldPlayerController.Movement.CanMoveAround = true;
                     goToPosition = Vector3.zero;
-                    break;
-
             }
         }
 
@@ -152,7 +195,7 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         #endregion
 
         #region Mantling
-
+        //The jump button is pressed
         void OnJump() {
             if (!goldPlayerController.Movement.IsCrouching) {
                 if (!ObstacleCheck()) {
@@ -177,7 +220,7 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             Debug.DrawRay(startPoint, Vector3.down * 1.5f, Color.white, 1f, true);
             if (Physics.SphereCast(startPoint, .5f, Vector3.down, out RaycastHit hit, mantleHeight - 0.5f, ~layerMask, QueryTriggerInteraction.Ignore)) {
                 goToPosition = hit.point;
-                movementState = MovementStates.Mantling;
+                isMantling = true;
                 cameraMovement.Mantle();
             }
         }
