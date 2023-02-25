@@ -2946,6 +2946,18 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 7400000, guid: 39e8ed72283e64a4ebac30c58f36888c, type: 2}
     - target: {fileID: 1217365363, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: mantleOffset.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217365363, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: mantleOffset.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217365363, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: mantleOffset.z
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217365363, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: mantleAnimation
       value: 
       objectReference: {fileID: 11400000, guid: 8229764112e05f2479fdd6be65effb9e, type: 2}
@@ -2960,6 +2972,10 @@ PrefabInstance:
     - target: {fileID: 1217365363, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: mantleOffsets.z
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1217365363, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
+      propertyPath: mantleCameraSpeed
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1217365363, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
       propertyPath: curve.m_Curve.Array.size
@@ -3225,7 +3241,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1217365363, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: ddc152fd91b11634ebe0338c91565756, type: 3}
 --- !u!1001 &6437052031463974449
 PrefabInstance:

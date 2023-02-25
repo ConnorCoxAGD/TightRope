@@ -5,14 +5,19 @@ using UnityEngine;
 namespace Cox.ControllerProject.GoldPlayerAddons {
 
     public enum MovementStates {
-        Default,
+        Grounded,
         Mantling,
         Crouching,
+        Jumping,
+        Falling,
+        LongFalling,
+        Landing
     }
 
     /// <summary>
     /// Add-on component that allows creation of advanced controls for the Gold Player Character Controller.
     /// </summary>
+    [RequireComponent(typeof(CameraMovement))]
     public class PlayerControllerExtras : MonoBehaviour {
         //Editor input variables
         public MovementStates movementState;
@@ -33,6 +38,8 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         CameraMovement cameraMovement;
         Vector3 goToPosition = Vector3.zero;
 
+        bool hardLanding = false;
+
 
         void Awake() {
             goldPlayerController = GetComponent<GoldPlayerController>();
@@ -43,7 +50,7 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             crouchMax = goldPlayerController.Movement.CrouchHeight;
             currentCrouchHeight = crouchMax;
             crouchTime = goldPlayerController.Movement.CrouchTime + 5;
-            cameraMovement = GetComponentInChildren<CameraMovement>();
+            cameraMovement = GetComponent<CameraMovement>();
             if (cameraMovement == null) {
                 Debug.LogWarning($"No CameraMovement component found for {gameObject.name}{this}.");
                 return;
@@ -63,21 +70,27 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             }
         }
         private void Update() {
+            ControlMovement();
+        }
+
+        private void ControlMovement() {
             switch (movementState) {
                 case MovementStates.Mantling:
                     //goldPlayerController.Movement.CanMoveAround = false;
-                    Vector3 movement = Vector3.Slerp(transform.position, goToPosition, 3 * Time.deltaTime);
-                   //movement.x = Mathf.Lerp(transform.position.x, goToPosition.x, mantleCurve.Evaluate(transform.position.x));
-                    movement.y = Mathf.Lerp(transform.position.y, goToPosition.y, 10 * Time.deltaTime);
-                    //movement.z = Mathf.Lerp(transform.position.z, goToPosition.z, mantleCurve.Evaluate(transform.position.z));
+                    var stickValue = goldPlayerController.Movement.GroundStick;
+                    goldPlayerController.Movement.GroundStick = 100;
+                    Vector3 movement = Vector3.Slerp(transform.position, goToPosition, 6 * Time.deltaTime);
+                    movement.y = Mathf.Lerp(transform.position.y, goToPosition.y, 20 * Time.deltaTime);
 
                     goldPlayerController.SetPosition(movement);
-                    if(Vector3.Distance(transform.position, goToPosition) <= 0.3f){
-                        movementState = MovementStates.Default;
+                    if (Vector3.Distance(transform.position, goToPosition) <= 0.3f) {
+                        movementState = MovementStates.Grounded;
+                        cameraMovement.ReturnToZero();
+                        goldPlayerController.Movement.GroundStick = stickValue;
 
                     }
                     break;
-                case MovementStates.Default:
+                case MovementStates.Grounded:
                     goldPlayerController.Movement.CanMoveAround = true;
                     goToPosition = Vector3.zero;
                     break;
@@ -165,15 +178,17 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             if (Physics.SphereCast(startPoint, .5f, Vector3.down, out RaycastHit hit, mantleHeight - 0.5f, ~layerMask, QueryTriggerInteraction.Ignore)) {
                 goToPosition = hit.point;
                 movementState = MovementStates.Mantling;
+                cameraMovement.Mantle();
             }
         }
-
+#if UNITY_EDITOR
         private void OnDrawGizmos() {
             Gizmos.color = Color.cyan;
             Gizmos.DrawSphere(goToPosition, .2f);
         }
+#endif
 
 
-        #endregion
+#endregion
     }
 }
