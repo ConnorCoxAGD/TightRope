@@ -11,6 +11,12 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
     public class PlayerControllerExtras : MonoBehaviour {
         //Editor input variables
         [SerializeField]
+        [Tooltip("Layers that the player is on. You don't want this to be the same as ground or the mantle layer. Ideally, the player is on it's own layer.")]
+        LayerMask playerLayer;
+        [SerializeField]
+        [Tooltip("Layers that can be mantled onto. Usually at least want your ground layer to be able to be mantled.")]
+        LayerMask mantleLayers;
+        [SerializeField]
         [Tooltip("The distance away a surface must be before it's able to be mantled.")]
         float mantleDistance = 1.5f;
         [SerializeField]
@@ -25,6 +31,9 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         [SerializeField]
         [Tooltip("The amount of time 'isHardLanding' is true after landing on the groun.")]
         float hardLandingTime = 0.25f;
+        [SerializeField]
+        [Tooltip("The maximum angle slope the player can mantle onto.")]
+        float mantleMaximumAngle = 20;
 
         //Automated variables
         //#Critical: required for player movement.
@@ -34,6 +43,7 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         CameraMovement cameraMovement;
         Vector3 goToPosition = Vector3.zero;
         [HideInInspector]
+        //special movement states
         public bool hardLanding = false,
             isMantling = false,
             isLongFalling = false,
@@ -41,7 +51,6 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
 
         bool fallCheckStarted = false;
         Coroutine longFallTimer;
-
 
         void Awake() {
             goldPlayerController = GetComponent<GoldPlayerController>();
@@ -86,7 +95,6 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
                 }
                 fallCheckStarted = false;
             }
-            
         }
         private void HardLanding() {
             hardLanding = true;
@@ -99,15 +107,12 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             if (fallCheckStarted) return;
             fallCheckStarted = true;
             longFallTimer = StartCoroutine(LongFallTimer());
-            
-
         }
 
         private IEnumerator LongFallTimer() {
             yield return new WaitForSeconds(timeUntilLongFall);
             if (goldPlayerController.Movement.IsGrounded) yield break;
             isLongFalling = true;
-
         }
 
         private IEnumerator HardLandingTimer() {
@@ -140,14 +145,10 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
                     goToPosition = Vector3.zero;
             }
         }
-
         #region Crouching
 
         public void OnCrouch() {
-            
             currentCrouchHeight = FindCrouchHeight();
-            //goldPlayerController.Movement.CrouchHeight = currentCrouchHeight;
-            //Debug.Log($"CrouchHeight set to {currentCrouchHeight}");
         }
 
         float FindCrouchHeight() {
@@ -155,35 +156,25 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             Debug.DrawRay(heightCheckPosition, Vector3.up *1.4f, Color.green);
             float playerCeiling = CheckCeiling();
             if(playerCeiling != currentCrouchHeight) {
-                //Debug.Log($"Ceiling height changed. {playerCeiling} != {currentCrouchHeight}");
                 if (Physics.Raycast(heightCheckPosition, Vector3.up, out RaycastHit ceilingHit, crouchMax)) {
                     var height = Vector3.Distance(heightCheckPosition, ceilingHit.point) - goldPlayerController.Controller.skinWidth - crouchOffset;
-                    //Debug.Log($"New height({height}) found.");
-
                     if (height > currentCrouchHeight) {
-                        //Debug.Log("Projected height greater than current crouch height.");
                         if (height > playerCeiling) {
-                            //Debug.Log("Height greater than current ceiling. Maintain height.");
                             return playerCeiling;
                         }
                     }
-
                     if (height > 0.90f) return height;
                     return currentCrouchHeight;
                 }
-                
             }
             else {
                 return playerCeiling;
             }
-            
             return crouchMax;
         }
         float CheckCeiling() {
-            LayerMask layerMask = 1<<6; //finally understand how layermasks work as a bitmask
-            //This can probably be made to be modifiable in the inspector given a little extra time in polish phase
             Debug.DrawRay(transform.localPosition, Vector3.up*3, Color.magenta, 1f);
-            if (Physics.Raycast(transform.localPosition, Vector3.up, out RaycastHit ceilingHit, 5, ~layerMask)){
+            if (Physics.Raycast(transform.localPosition, Vector3.up, out RaycastHit ceilingHit, 5, ~playerLayer)){
                 float dist = Vector3.Distance(transform.localPosition, ceilingHit.point) - goldPlayerController.Controller.skinWidth - crouchOffset;
                 Debug.Log($"Ceiling found: {dist}");
                 return dist;
@@ -205,7 +196,6 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         }
 
         bool ObstacleCheck() {
-            LayerMask layerMask = 1 << 6;
             Vector3 startPoint = transform.localPosition + (transform.up * mantleHeight);
             if(!Physics.Raycast(startPoint, transform.forward, mantleDistance + 0.5f)) {
                 return false;
@@ -214,11 +204,11 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         }
 
         void MantleCheck() {
-            //point a raycast down towards a ground.
-            LayerMask layerMask = 1<<6;
             Vector3 startPoint = transform.localPosition + (transform.forward * mantleDistance) + (transform.up * mantleHeight);
             Debug.DrawRay(startPoint, Vector3.down * 1.5f, Color.white, 1f, true);
-            if (Physics.SphereCast(startPoint, .5f, Vector3.down, out RaycastHit hit, mantleHeight - 0.5f, ~layerMask, QueryTriggerInteraction.Ignore)) {
+            if (Physics.SphereCast(startPoint, .5f, Vector3.down, out RaycastHit hit, mantleHeight - 0.5f, mantleLayers, QueryTriggerInteraction.Ignore)) {
+                var angle = Vector3.Angle(Vector3.up, hit.normal);
+                if (angle > mantleMaximumAngle) return;
                 goToPosition = hit.point;
                 isMantling = true;
                 cameraMovement.Mantle();
