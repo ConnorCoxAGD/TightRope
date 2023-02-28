@@ -14,10 +14,10 @@ public abstract class InteractableObject : MonoBehaviour
     [SerializeField]
     string interactionMessage = "Explanation of interaction.";
 
-    public virtual void InteractionAreaEntered(Collider colliderData) {
+    public virtual void InteractionAreaEntered(PlayerControllerExtras player, Collider colliderData) {
         Debug.Log($"{this} interaction area entered {colliderData} collider.");
     }
-    public virtual void InteractionAreaExited(Collider colliderData) {
+    public virtual void InteractionAreaExited(PlayerControllerExtras player, Collider colliderData) {
         Debug.Log($"{this} interaction area exited {colliderData} collider.");
     }
     public virtual void Interact(PlayerControllerExtras player) {

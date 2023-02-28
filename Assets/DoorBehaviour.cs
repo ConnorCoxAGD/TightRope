@@ -13,7 +13,10 @@ public enum DoorStates {
 public class DoorBehaviour : InteractableObject
 {
     [SerializeField]
-    string LockedMessage = "This message displays when the door is locked.";
+    string unlockedMessage = "This message displays when the door is unlocked.",
+        lockedMessage = "This message displays when the door is locked.",
+        latchedMessage = "This message displays when the door is latched.",
+        sealedMessage = "This message displays when the door is sealed.";
     [SerializeField]
     DoorStates state = DoorStates.unlocked;
     [SerializeField]
@@ -88,6 +91,7 @@ public class DoorBehaviour : InteractableObject
                 StartMovement();
                 break;
             case DoorStates.locked:
+
                 break;
             case DoorStates.latched:
 
@@ -96,10 +100,29 @@ public class DoorBehaviour : InteractableObject
 
                 break;
         }
-
-
-        
     }
+    public override void InteractionAreaEntered(PlayerControllerExtras player, Collider colliderData) {
+        //base.InteractionAreaEntered(player, colliderData);
 
+        switch (state) {
+            case DoorStates.unlocked:
+                player.InteractionMessage(unlockedMessage);
+                break;
+            case DoorStates.locked:
+                player.InteractionMessage(lockedMessage);
+                break;
+            case DoorStates.latched:
+                player.InteractionMessage(latchedMessage);
+                break;
+            case DoorStates.sealedShut:
+                player.InteractionMessage(sealedMessage);
+                break;
+        }
+    }
+    public override void InteractionAreaExited(PlayerControllerExtras player, Collider colliderData) {
+        //base.InteractionAreaExited(player, colliderData);
+
+        player.ClearMessage();
+    }
     //if latched, we'll simply turn off the latched collider
 }

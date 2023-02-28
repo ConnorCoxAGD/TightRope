@@ -1,6 +1,5 @@
 using Hertzole.GoldPlayer;
 using System.Collections;
-using UnityEditorInternal;
 using UnityEngine;
 
 namespace Cox.ControllerProject.GoldPlayerAddons {
@@ -34,6 +33,8 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         [SerializeField]
         [Tooltip("The maximum angle slope the player can mantle onto.")]
         float mantleMaximumAngle = 20;
+
+        string interactionMessage = "";
 
         //Automated variables
         //#Critical: required for player movement.
@@ -77,14 +78,14 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             var obj = other.GetComponentInParent<InteractableObject>();
             if (obj == null) return;
             interactable = obj;
-            interactable.InteractionAreaEntered(other);
+            interactable.InteractionAreaEntered(this, other);
 
         }
         private void OnTriggerExit(Collider other) {
             var obj = other.GetComponentInParent<InteractableObject>();
             if (obj == null) return;
             if (obj == interactable) {
-                interactable.InteractionAreaExited(other);
+                interactable.InteractionAreaExited(this, other);
                 interactable = null;
                 
             }
@@ -94,6 +95,19 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             if (interactable == null) return;
             interactable.Interact(this);
 
+        }
+
+        public void InteractionMessage(string message) {
+            interactionMessage = message;
+            Debug.Log($"Recieved message: {interactionMessage}");
+            //additional code to display a message.
+            //we may also create a additional script to work with ui instead.
+            //we may also be able to tie unity events to this to make it easy to drag, drop, and modify.
+        }
+        public void ClearMessage() {
+            interactionMessage = null;
+            Debug.Log("Cleared messages.");
+            //turn off the UI responsible for displaying this message.
         }
 
         // On Late update because regular update intereferes with GoldPlayer. Ideally this can be fixed eventually.
@@ -152,10 +166,11 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             if (isMantling) {
                 //goldPlayerController.Movement.Gravity = 0;
                 //goldPlayerController.Movement.CanMoveAround = false;
+                goldPlayerController.Audio.StopLandSound();
                 Vector3 movement;
 
                 movement = Vector3.Slerp(transform.position, goToPosition, 6 * Time.deltaTime);
-                movement.y = Mathf.Lerp(transform.position.y, goToPosition.y, 15 * Time.deltaTime);
+                movement.y = Mathf.Lerp(transform.position.y, goToPosition.y, 20 * Time.deltaTime);
                 
                 
 
