@@ -277,7 +277,7 @@ CharacterController:
   m_SlopeLimit: 45
   m_StepOffset: 0.3
   m_SkinWidth: 0.01
-  m_MinMoveDistance: 0.001
+  m_MinMoveDistance: 0
   m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &1486232910130243533
 MonoBehaviour:
@@ -788,11 +788,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43dafe34efecb7c4c9ba598c8cf8e128, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementState: 0
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  mantleLayers:
+    serializedVersion: 2
+    m_Bits: 264
   mantleDistance: 1.5
   mantleHeight: 2
   crouchHeightDetectionDistance: 1
+  timeUntilLongFall: 1
+  hardLandingTime: 0.25
+  mantleMaximumAngle: 20
   goldPlayerController: {fileID: 0}
+  hardLanding: 0
+  isMantling: 0
+  isLongFalling: 0
+  isCrouching: 0
 --- !u!114 &639266864556776237
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -805,8 +817,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afe37690b03b94e4299bf956d7bcf259, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mantleOffset: {x: 2, y: 0, z: 15}
+  m_camera: {fileID: 0}
+  mantleCameraRotation: {x: 2, y: 0, z: 15}
   mantleCameraSpeed: 5
+  hardLandingCameraHeight: 0.6
+  hardLandingRotation: {x: 30, y: 0, z: 0}
 --- !u!1 &1486232910331922932
 GameObject:
   m_ObjectHideFlags: 0

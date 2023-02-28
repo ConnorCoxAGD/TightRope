@@ -43,10 +43,6 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             }
         }
 
-        public void OnInteract() {
-            Debug.Log("Interaction Performed.");
-        }
-
         public void OnChangeItem(InputValue input) {
             var value = input.Get<Vector2>().y;
             if (items.Count > 1 && value != 0) {

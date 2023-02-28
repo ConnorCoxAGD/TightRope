@@ -39,7 +39,7 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         //#Critical: required for player movement.
         [HideInInspector]
         public GoldPlayerController goldPlayerController; 
-        float crouchOffset = .25f, crouchMax, currentCrouchHeight, crouchTime;
+        float crouchOffset = .25f, crouchMax, currentCrouchHeight, crouchTime, gravity;
         CameraMovement cameraMovement;
         Vector3 goToPosition = Vector3.zero;
         [HideInInspector]
@@ -51,6 +51,9 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
 
         bool fallCheckStarted = false;
         Coroutine longFallTimer;
+        InteractableObject interactable = null;
+
+
 
         void Awake() {
             goldPlayerController = GetComponent<GoldPlayerController>();
@@ -61,12 +64,36 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             crouchMax = goldPlayerController.Movement.CrouchHeight;
             currentCrouchHeight = crouchMax;
             crouchTime = goldPlayerController.Movement.CrouchTime + 5;
+            gravity = goldPlayerController.Movement.Gravity;
             cameraMovement = GetComponent<CameraMovement>();
             if (cameraMovement == null) {
                 Debug.LogWarning($"No CameraMovement component found for {gameObject.name}{this}.");
                 return;
             }
             cameraMovement.Initialize(this);
+        }
+
+        private void OnTriggerEnter(Collider other) {
+            var obj = other.GetComponentInParent<InteractableObject>();
+            if (obj == null) return;
+            interactable = obj;
+            interactable.InteractionAreaEntered(other);
+
+        }
+        private void OnTriggerExit(Collider other) {
+            var obj = other.GetComponentInParent<InteractableObject>();
+            if (obj == null) return;
+            if (obj == interactable) {
+                interactable.InteractionAreaExited(other);
+                interactable = null;
+                
+            }
+        }
+
+        public void OnInteract() {
+            if (interactable == null) return;
+            interactable.Interact(this);
+
         }
 
         // On Late update because regular update intereferes with GoldPlayer. Ideally this can be fixed eventually.
@@ -123,26 +150,29 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
 
         private void MantleControl() {
             if (isMantling) {
+                //goldPlayerController.Movement.Gravity = 0;
                 //goldPlayerController.Movement.CanMoveAround = false;
-                var stickValue = goldPlayerController.Movement.GroundStick;
-                goldPlayerController.Movement.GroundStick = 100;
-                Vector3 movement = Vector3.Slerp(transform.position, goToPosition, 6 * Time.deltaTime);
-                movement.y = Mathf.Lerp(transform.position.y, goToPosition.y, 20 * Time.deltaTime);
+                Vector3 movement;
+
+                movement = Vector3.Slerp(transform.position, goToPosition, 6 * Time.deltaTime);
+                movement.y = Mathf.Lerp(transform.position.y, goToPosition.y, 15 * Time.deltaTime);
+                
+                
+
                 StopCoroutine(longFallTimer);
                 isLongFalling = false;
                 hardLanding = false;
 
                 goldPlayerController.SetPosition(movement);
+
                 if (Vector3.Distance(transform.position, goToPosition) <= 0.3f) {
-                    isMantling = false;
+                    goldPlayerController.Movement.Gravity = gravity;
                     cameraMovement.ReturnToZero();
-                    goldPlayerController.Movement.GroundStick = stickValue;
-                }
-                return;
-            }
-            else {
                     goldPlayerController.Movement.CanMoveAround = true;
                     goToPosition = Vector3.zero;
+                    isMantling = false;
+                }
+                return;
             }
         }
         #region Crouching
@@ -206,10 +236,11 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         void MantleCheck() {
             Vector3 startPoint = transform.localPosition + (transform.forward * mantleDistance) + (transform.up * mantleHeight);
             Debug.DrawRay(startPoint, Vector3.down * 1.5f, Color.white, 1f, true);
-            if (Physics.SphereCast(startPoint, .5f, Vector3.down, out RaycastHit hit, mantleHeight - 0.5f, mantleLayers, QueryTriggerInteraction.Ignore)) {
+            if (Physics.SphereCast(startPoint, .5f, Vector3.down, out RaycastHit hit, mantleHeight - 1f, mantleLayers, QueryTriggerInteraction.Ignore)) {
                 var angle = Vector3.Angle(Vector3.up, hit.normal);
+                if (Physics.Raycast(hit.point, Vector3.up, goldPlayerController.Controller.height)) return;
                 if (angle > mantleMaximumAngle) return;
-                goToPosition = hit.point;
+                goToPosition = new Vector3(hit.point.x, hit.point.y + 0.2f, hit.point.z);
                 isMantling = true;
                 cameraMovement.Mantle();
             }
