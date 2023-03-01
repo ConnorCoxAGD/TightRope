@@ -7,9 +7,15 @@ using UnityEngine.InputSystem;
 
 namespace Cox.ControllerProject.GoldPlayerAddons {
     public class InventoryComponent : MonoBehaviour {
-        [SerializeField] GameObject hand; //for a place to parent held items.
-        [SerializeField] GameObject crosshair;
-        [SerializeField] List<ItemBehaviour> items = new List<ItemBehaviour>();
+        [SerializeField] 
+        GameObject hand; //for a place to parent held items.
+        [SerializeField] 
+        GameObject crosshair;
+        //To permanently store items, we'll need to create a save file that get's loaded. Otherwise, changes will disappear everytime we restart.
+        [SerializeField] 
+        List<ItemBehaviour> handHeldItems = new List<ItemBehaviour>();
+        [SerializeField]
+        List<ItemBehaviour> inventoryOnlyItems = new List<ItemBehaviour>();
         int activeItem = 0;
 
         PlayerInput input;
@@ -18,37 +24,39 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             InstantiateItems();
         }
         void InstantiateItems() { 
-            for(int i = 0; i < items.Count; i++) {
-                var instance = Instantiate(items[i], hand.transform);
-                items[i] = instance;
+            for(int i = 0; i < handHeldItems.Count; i++) {
+                var instance = Instantiate(handHeldItems[i], hand.transform);
+                handHeldItems[i] = instance;
                 instance.gameObject.SetActive(false);
                 
             }
             ItemChanged();
         }
+
+        #region Input Actions
         public void OnPrimaryUse() {
-            if (items.Count > 0) {
-                if (items[activeItem].usesCrosshair) {
-                    items[activeItem].PrimaryFunction(crosshair);
+            if (handHeldItems.Count > 0) {
+                if (handHeldItems[activeItem].usesCrosshair) {
+                    handHeldItems[activeItem].PrimaryFunction(crosshair);
                 }
                 else {
-                    items[activeItem].PrimaryFunction();
+                    handHeldItems[activeItem].PrimaryFunction();
                 }
                 
             }
         }
         public void OnSecondaryUse() {
-            if (items.Count > 0) {
-                items[activeItem].SecondaryFunction();
+            if (handHeldItems.Count > 0) {
+                handHeldItems[activeItem].SecondaryFunction();
             }
         }
 
         public void OnChangeItem(InputValue input) {
             var value = input.Get<Vector2>().y;
-            if (items.Count > 1 && value != 0) {
-                items[activeItem].gameObject.SetActive(false);
+            if (handHeldItems.Count > 1 && value != 0) {
+                handHeldItems[activeItem].gameObject.SetActive(false);
                 if (value > 0) {
-                    if (activeItem < items.Count - 1) {
+                    if (activeItem < handHeldItems.Count - 1) {
                         activeItem++;
                     }
                     else {
@@ -60,17 +68,25 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
                         activeItem--;
                     }
                     else {
-                        activeItem = items.Count - 1;
+                        activeItem = handHeldItems.Count - 1;
                     }
                 }
                 ItemChanged();
             }
         }
+        #endregion
 
         public void ItemChanged() {
-            if (items.Count > 0) {
-                items[activeItem].gameObject.SetActive(true);
+            if (handHeldItems.Count > 0) {
+                handHeldItems[activeItem].gameObject.SetActive(true);
             }
+        }
+
+        public void AddHandHeldItem(ItemBehaviour newItem) {
+            handHeldItems.Add(newItem);
+            newItem.transform.parent = hand.transform;
+            newItem.transform.localPosition = Vector3.zero;
+
         }
 
     }

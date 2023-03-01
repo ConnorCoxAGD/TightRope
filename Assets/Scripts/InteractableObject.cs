@@ -19,6 +19,7 @@ public abstract class InteractableObject : MonoBehaviour
     }
     public virtual void InteractionAreaExited(PlayerControllerExtras player, Collider colliderData) {
         Debug.Log($"{this} interaction area exited {colliderData} collider.");
+        player.ClearMessage();
     }
     public virtual void Interact(PlayerControllerExtras player) {
         Debug.Log($"{this} interaction performed by {player}.");

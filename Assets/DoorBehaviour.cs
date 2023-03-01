@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum DoorStates {
-    unlocked,
+    unlockedClosed,
+    opened,
     locked,
     latched,
     sealedShut
@@ -13,12 +14,14 @@ public enum DoorStates {
 public class DoorBehaviour : InteractableObject
 {
     [SerializeField]
-    string unlockedMessage = "This message displays when the door is unlocked.",
+    [TextArea(2, 5)]
+    string unlockedClosedMessage = "This message displays when the door is unlocked but closed.",
+        openedMessage = "This message displays when the door is opened.",
         lockedMessage = "This message displays when the door is locked.",
         latchedMessage = "This message displays when the door is latched.",
         sealedMessage = "This message displays when the door is sealed.";
     [SerializeField]
-    DoorStates state = DoorStates.unlocked;
+    DoorStates state = DoorStates.unlockedClosed;
     [SerializeField]
     [Tooltip("Used to allow the player to open the door. Must be set to 'Trigger'.")]
     Collider frontTrigger, backTrigger;
@@ -65,16 +68,27 @@ public class DoorBehaviour : InteractableObject
         }
     }
 
+    private void SetAllTriggersActiveState(bool activeState) {
+        frontTrigger.gameObject.SetActive(activeState);
+        backTrigger.gameObject.SetActive(activeState);
+    }
+
+    private void SetActiveTrigger(Collider trigger, bool activeState) {
+        trigger.gameObject.SetActive(activeState);
+    }
+
     private void MoveDoor() {
         doorPivot.transform.localRotation = Quaternion.Lerp(doorPivot.transform.localRotation, goToRotation, openSpeed * Time.deltaTime);
 
         if (doorPivot.transform.localRotation == goToRotation) {
             isMoving = false;
             isOpen = !isOpen;
+            SetAllTriggersActiveState(true);
         }
     }
     private void StartMovement() {
         isMoving = true;
+        SetAllTriggersActiveState(false);
         if (isOpen) {
             goToRotation = Quaternion.identity;
         }
@@ -85,13 +99,23 @@ public class DoorBehaviour : InteractableObject
 
     public override void Interact(PlayerControllerExtras player) {
         base.Interact(player);
+        if (isOpen) {
+            state = DoorStates.opened;
+        }
 
         switch (state) {
-            case DoorStates.unlocked:
+            case DoorStates.unlockedClosed:
                 StartMovement();
+                state = DoorStates.opened;
+                player.ClearMessage();
+                break;
+            case DoorStates.opened:
+                StartMovement();
+                player.ClearMessage();
+                state = DoorStates.unlockedClosed;
                 break;
             case DoorStates.locked:
-
+                //if player has key, set to unlockedClosed
                 break;
             case DoorStates.latched:
 
@@ -105,8 +129,11 @@ public class DoorBehaviour : InteractableObject
         //base.InteractionAreaEntered(player, colliderData);
 
         switch (state) {
-            case DoorStates.unlocked:
-                player.InteractionMessage(unlockedMessage);
+            case DoorStates.unlockedClosed:
+                player.InteractionMessage(unlockedClosedMessage);
+                break;
+            case DoorStates.opened:
+                player.InteractionMessage(openedMessage);
                 break;
             case DoorStates.locked:
                 player.InteractionMessage(lockedMessage);
@@ -118,11 +145,6 @@ public class DoorBehaviour : InteractableObject
                 player.InteractionMessage(sealedMessage);
                 break;
         }
-    }
-    public override void InteractionAreaExited(PlayerControllerExtras player, Collider colliderData) {
-        //base.InteractionAreaExited(player, colliderData);
-
-        player.ClearMessage();
     }
     //if latched, we'll simply turn off the latched collider
 }

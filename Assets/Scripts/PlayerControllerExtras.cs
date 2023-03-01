@@ -1,6 +1,7 @@
 using Hertzole.GoldPlayer;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Cox.ControllerProject.GoldPlayerAddons {
     /// <summary>
@@ -33,6 +34,10 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         [SerializeField]
         [Tooltip("The maximum angle slope the player can mantle onto.")]
         float mantleMaximumAngle = 20;
+        [SerializeField]
+        Text interactionMessageText;
+
+        InventoryComponent inventory = null;
 
         string interactionMessage = "";
 
@@ -54,8 +59,7 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         Coroutine longFallTimer;
         InteractableObject interactable = null;
 
-
-
+        #region Setup
         void Awake() {
             goldPlayerController = GetComponent<GoldPlayerController>();
             if (goldPlayerController == null) {
@@ -72,8 +76,15 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
                 return;
             }
             cameraMovement.Initialize(this);
+            inventory = GetComponent<InventoryComponent>();
+            if (inventory == null) {
+                Debug.LogWarning($"{this} No inventory component. Items will be unavailable.");
+            }
+            ClearMessage();
         }
 
+        #endregion
+        #region Interactions
         private void OnTriggerEnter(Collider other) {
             var obj = other.GetComponentInParent<InteractableObject>();
             if (obj == null) return;
@@ -87,7 +98,6 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             if (obj == interactable) {
                 interactable.InteractionAreaExited(this, other);
                 interactable = null;
-                
             }
         }
 
@@ -98,18 +108,21 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         }
 
         public void InteractionMessage(string message) {
-            interactionMessage = message;
+            interactionMessage = message; //may be redundant, but it was helpful for starting and may be helpful later.
+            interactionMessageText.text = message;
             Debug.Log($"Recieved message: {interactionMessage}");
             //additional code to display a message.
             //we may also create a additional script to work with ui instead.
             //we may also be able to tie unity events to this to make it easy to drag, drop, and modify.
         }
         public void ClearMessage() {
-            interactionMessage = null;
+            interactionMessage = "";
+            interactionMessageText.text = "";
             Debug.Log("Cleared messages.");
             //turn off the UI responsible for displaying this message.
         }
-
+        #endregion
+        #region Movement
         // On Late update because regular update intereferes with GoldPlayer. Ideally this can be fixed eventually.
         void LateUpdate() {
             goldPlayerController.Controller.center = new Vector3(0, goldPlayerController.Controller.height / 2, 0);
@@ -137,6 +150,7 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
                 fallCheckStarted = false;
             }
         }
+        #region Falling and Landing
         private void HardLanding() {
             hardLanding = true;
             isLongFalling = false;
@@ -160,36 +174,8 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             yield return new WaitForSecondsRealtime(hardLandingTime);
             hardLanding = false;
         }
+        #endregion
 
-
-        private void MantleControl() {
-            if (isMantling) {
-                //goldPlayerController.Movement.Gravity = 0;
-                //goldPlayerController.Movement.CanMoveAround = false;
-                goldPlayerController.Audio.StopLandSound();
-                Vector3 movement;
-
-                movement = Vector3.Slerp(transform.position, goToPosition, 6 * Time.deltaTime);
-                movement.y = Mathf.Lerp(transform.position.y, goToPosition.y, 20 * Time.deltaTime);
-                
-                
-
-                StopCoroutine(longFallTimer);
-                isLongFalling = false;
-                hardLanding = false;
-
-                goldPlayerController.SetPosition(movement);
-
-                if (Vector3.Distance(transform.position, goToPosition) <= 0.3f) {
-                    goldPlayerController.Movement.Gravity = gravity;
-                    cameraMovement.ReturnToZero();
-                    goldPlayerController.Movement.CanMoveAround = true;
-                    goToPosition = Vector3.zero;
-                    isMantling = false;
-                }
-                return;
-            }
-        }
         #region Crouching
 
         public void OnCrouch() {
@@ -257,9 +243,40 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
                 if (angle > mantleMaximumAngle) return;
                 goToPosition = new Vector3(hit.point.x, hit.point.y + 0.2f, hit.point.z);
                 isMantling = true;
+                goldPlayerController.Movement.CanJump = false;
                 cameraMovement.Mantle();
             }
         }
+
+        private void MantleControl() {
+            if (isMantling) {
+                goldPlayerController.Movement.Gravity = gravity/3;
+                goldPlayerController.Movement.CanMoveAround = false;
+                goldPlayerController.Audio.StopLandSound();
+                Vector3 movement;
+
+                movement = Vector3.Lerp(transform.position, goToPosition, 6 * Time.deltaTime);
+                movement.y = Mathf.Lerp(transform.position.y, goToPosition.y + 0.2f, 10 * Time.deltaTime);
+
+                StopCoroutine(longFallTimer);
+                isLongFalling = false;
+                hardLanding = false;
+
+                goldPlayerController.SetPosition(movement);
+
+                if (Vector3.Distance(transform.position, goToPosition) <= 0.15f) {
+                    goldPlayerController.Movement.Gravity = gravity;
+                    cameraMovement.ReturnToZero();
+                    goldPlayerController.Movement.CanMoveAround = true;
+                    goToPosition = Vector3.zero;
+                    isMantling = false;
+                    goldPlayerController.Movement.CanJump = true;
+                }
+                return;
+            }
+        }
+        #endregion
+
 #if UNITY_EDITOR
         private void OnDrawGizmos() {
             Gizmos.color = Color.cyan;
