@@ -98,7 +98,10 @@ public class DoorBehaviour : InteractableObject
     }
 
     public override void Interact(PlayerControllerExtras player) {
-        base.Interact(player);
+        if (!interactable) { 
+            FailedInteraction();
+            return;
+        }
         if (isOpen) {
             state = DoorStates.opened;
         }
@@ -118,10 +121,10 @@ public class DoorBehaviour : InteractableObject
                 //if player has key, set to unlockedClosed
                 break;
             case DoorStates.latched:
-
+                //if player is in correct trigger? or activate latch warning trigger?
                 break;
             case DoorStates.sealedShut:
-
+                //Warn player the door is sealed and cannot be opened by the player through normal or any means.
                 break;
         }
     }
@@ -145,6 +148,10 @@ public class DoorBehaviour : InteractableObject
                 player.InteractionMessage(sealedMessage);
                 break;
         }
+    }
+
+    protected override void FailedInteraction() {
+        base.FailedInteraction();
     }
     //if latched, we'll simply turn off the latched collider
 }

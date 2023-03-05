@@ -9,11 +9,10 @@ public abstract class ItemBehaviour : InteractableObject
     public string description = "Item description.";
     public bool usesCrosshair = true;
 
-    
-
     virtual public void PrimaryFunction() {
         Debug.Log("No primary function.");
     }
+    //work towards making this unnecessary
     virtual public void PrimaryFunction(GameObject crosshair) {
         Debug.Log("No primary function.");
     }

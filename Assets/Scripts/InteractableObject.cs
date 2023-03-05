@@ -22,6 +22,14 @@ public abstract class InteractableObject : MonoBehaviour
         player.ClearMessage();
     }
     public virtual void Interact(PlayerControllerExtras player) {
+        if (!interactable) { 
+            FailedInteraction();
+            return;
+        }
         Debug.Log($"{this} interaction performed by {player}.");
+    }
+
+    protected virtual void FailedInteraction() {
+        Debug.Log($"Player cannot interact with {this} right now.");
     }
 }
