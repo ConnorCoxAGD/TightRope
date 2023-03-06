@@ -1,11 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Filo;
 
 namespace Cox.ControllerProject.GoldPlayerAddons {
-    public class RopeItemBehaviour : ItemBehaviour {
+    public class RopeItemBehaviour : ToolBehaviour {
         [Tooltip("The maximum amount of ropes that can be in play at once.")]
         [SerializeField] int ropeLimit = 1;
         [Tooltip("The maximum distance away from an anchor point you can be on the first rope connection.")]

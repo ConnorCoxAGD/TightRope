@@ -9,35 +9,50 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
     /// </summary>
     [RequireComponent(typeof(CameraMovement))]
     public class PlayerControllerExtras : MonoBehaviour {
-        //Editor input variables
+        #region Serialized Fields
         [SerializeField]
         [Tooltip("Layers that the player is on. You don't want this to be the same as ground or the mantle layer. Ideally, the player is on it's own layer.")]
         LayerMask playerLayer;
+
+        [Header("Mantling")]
         [SerializeField]
         [Tooltip("Layers that can be mantled onto. Usually at least want your ground layer to be able to be mantled.")]
         LayerMask mantleLayers;
+
         [SerializeField]
         [Tooltip("The distance away a surface must be before it's able to be mantled.")]
         float mantleDistance = 1.5f;
+
         [SerializeField]
         [Tooltip("The maximum height from the player's feet a surface can be before it can't be mantled.")]
         float mantleHeight = 2.5f;
-        [SerializeField]
-        [Tooltip("Determines how far away the player reacts to changes in ceiling height while crouching.")]
-        float crouchHeightDetectionDistance = 1.0f;
-        [SerializeField]
-        [Tooltip("The time is takes until the players falling state changes to long fall.")]
-        float timeUntilLongFall = 1f;
-        [SerializeField]
-        [Tooltip("The amount of time 'isHardLanding' is true after landing on the groun.")]
-        float hardLandingTime = 0.25f;
+
         [SerializeField]
         [Tooltip("The maximum angle slope the player can mantle onto.")]
         float mantleMaximumAngle = 20;
+
+        [Header("Crouching")]
+        [SerializeField]
+        [Tooltip("Determines how far away the player reacts to changes in ceiling height while crouching.")]
+        float crouchHeightDetectionDistance = 1.0f;
+
+        [Header("Falling and Landing")]
+        [SerializeField]
+        [Tooltip("The time is takes until the players falling state changes to long fall.")]
+        float timeUntilLongFall = 1f;
+
+        [SerializeField]
+        [Tooltip("The amount of time 'isHardLanding' is true after landing on the groun.")]
+        float hardLandingTime = 0.25f;
+
+        [Header("UI")]
         [SerializeField]
         Text interactionMessageText;
+        #endregion
 
-        InventoryComponent inventory = null;
+
+        [HideInInspector]
+        public InventoryComponent inventory = null;
 
         string interactionMessage = "";
 
@@ -45,18 +60,28 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         //#Critical: required for player movement.
         [HideInInspector]
         public GoldPlayerController goldPlayerController; 
-        float crouchOffset = .25f, crouchMax, currentCrouchHeight, crouchTime, gravity;
+
+        float crouchOffset = .25f, 
+            crouchMax, 
+            currentCrouchHeight, 
+            crouchTime, 
+            gravity;
+
         CameraMovement cameraMovement;
+
         Vector3 goToPosition = Vector3.zero;
-        [HideInInspector]
+
         //special movement states
+        [HideInInspector]
         public bool hardLanding = false,
             isMantling = false,
             isLongFalling = false,
             isCrouching = false;
 
         bool fallCheckStarted = false;
+
         Coroutine longFallTimer;
+
         InteractableObject interactable = null;
 
         #region Setup
@@ -115,12 +140,23 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             //we may also create a additional script to work with ui instead.
             //we may also be able to tie unity events to this to make it easy to drag, drop, and modify.
         }
+        public void InteractionMessage(string message, float time) {
+            InteractionMessage(message);
+            StartCoroutine(TimedMessage(time));
+        }
+        public IEnumerator TimedMessage(float seconds) {
+            yield return new WaitForSeconds(seconds);
+            ClearMessage();
+        }
         public void ClearMessage() {
             interactionMessage = "";
             interactionMessageText.text = "";
             Debug.Log("Cleared messages.");
             //turn off the UI responsible for displaying this message.
         }
+
+        
+
         #endregion
         #region Movement
         // On Late update because regular update intereferes with GoldPlayer. Ideally this can be fixed eventually.

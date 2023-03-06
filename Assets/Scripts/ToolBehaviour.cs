@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public abstract class ItemBehaviour : InteractableObject
+using Cox.ControllerProject.GoldPlayerAddons;
+public abstract class ToolBehaviour : InteractableObject
 {
     public string itemName = "New Item";
     [TextArea(3, 10)]

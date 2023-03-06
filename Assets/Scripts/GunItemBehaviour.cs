@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public class GunItemBehaviour : ItemBehaviour
+public class GunItemBehaviour : ToolBehaviour
 {
     [SerializeField] GameObject bullet;
     [SerializeField] Transform firePoint;
 
     private void OnEnable() {
     }
-
+    /*
     public override void PrimaryFunction(GameObject crosshair) {
         var crosshairPos = Camera.main.ScreenToWorldPoint(new Vector3(crosshair.transform.position.x, crosshair.transform.position.y, 1));
         var distance = Camera.main.transform.forward * 1000;
@@ -25,5 +25,5 @@ public class GunItemBehaviour : ItemBehaviour
             firePoint.LookAt(distance);
         }
         var b = Instantiate(bullet, firePoint.position, firePoint.transform.rotation);
-    }
+    }*/
 }

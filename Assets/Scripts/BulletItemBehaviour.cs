@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
-public class BulletItemBehaviour : ItemBehaviour
+public class BulletItemBehaviour : ToolBehaviour
 {
     [SerializeField] float force;
     Rigidbody rb;

@@ -1,10 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+namespace Cox.ControllerProject.GoldPlayerAddons {
+    [CreateAssetMenu(fileName = "New Item", menuName = "Create Item Object")]
+    public class ItemObject : ScriptableObject {
+        public string ID = string.Empty;
+        public ItemPickUp pickUpPrefab = null;
 
-public abstract class ItemObject : ScriptableObject {
-    public string ID = string.Empty;
-    public bool isInventoryOnly = true;
-    public GameObject prefab; //for physical objects used by the player.
-
+    }
 }
