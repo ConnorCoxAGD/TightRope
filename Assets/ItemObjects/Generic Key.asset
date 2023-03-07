@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8065ddce0a22489468952bca029364f7, type: 3}
   m_Name: Generic Key
   m_EditorClassIdentifier: 
-  ID: 
-  pickUpPrefab: {fileID: 0}
+  ID: Generic Key
+  pickUpPrefab: {fileID: 1863821831949785105, guid: e5d3e612313935f4cbce84a86d7ff4ae, type: 3}
