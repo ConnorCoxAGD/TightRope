@@ -13,6 +13,8 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         [SerializeField]
         [Tooltip("Layers that the player is on. You don't want this to be the same as ground or the mantle layer. Ideally, the player is on it's own layer.")]
         LayerMask playerLayer;
+        [SerializeField]
+        float interactionReach = 2.5f;
 
         [Header("Mantling")]
         [SerializeField]
@@ -48,9 +50,13 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         [Header("UI")]
         [SerializeField]
         Text interactionMessageText;
+        [SerializeField]
+        [Tooltip("The crosshair used for aiming. Tools and interaction are based on a raycast from this image's screen position.")]
+        Image crosshair;
+
         #endregion
 
-
+        #region Hidden Fields
         [HideInInspector]
         public InventoryComponent inventory = null;
 
@@ -59,12 +65,12 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         //Automated variables
         //#Critical: required for player movement.
         [HideInInspector]
-        public GoldPlayerController goldPlayerController; 
+        public GoldPlayerController goldPlayerController;
 
-        float crouchOffset = .25f, 
-            crouchMax, 
-            currentCrouchHeight, 
-            crouchTime, 
+        float crouchOffset = .25f,
+            crouchMax,
+            currentCrouchHeight,
+            crouchTime,
             gravity;
 
         CameraMovement cameraMovement;
@@ -79,12 +85,13 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             isCrouching = false;
 
         bool fallCheckStarted = false;
-
         Coroutine longFallTimer;
 
         InteractableObject interactable = null;
+        #endregion
 
-        #region Setup
+        #region Methods
+        #region MonoBehaviours
         void Awake() {
             goldPlayerController = GetComponent<GoldPlayerController>();
             if (goldPlayerController == null) {
@@ -105,11 +112,43 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             if (inventory == null) {
                 Debug.LogWarning($"{this} No inventory component. Items will be unavailable.");
             }
+            if (crosshair == null) Debug.LogWarning($"{this}: Crosshair variable is null.\n Player aim will default to a cast from the center of the screen, instead of from a designated crosshair.");
             ClearMessage();
+        }
+
+        // On Late update because regular update intereferes with GoldPlayer. Ideally this can be fixed eventually.
+        void LateUpdate() {
+            goldPlayerController.Controller.center = new Vector3(0, goldPlayerController.Controller.height / 2, 0);
+            goldPlayerController.Movement.CrouchHeight = Mathf.MoveTowards(goldPlayerController.Movement.CrouchHeight, currentCrouchHeight, crouchTime * Time.deltaTime);
+
+            if (goldPlayerController.Movement.IsCrouching) {
+                cameraMovement.Crouched(goldPlayerController.Movement.CrouchHeight);
+                isCrouching = true;
+                OnCrouch();
+            }
+            else {
+                isCrouching = false;
+            }
+            //on late Update because it involves the camera.
+            CastInteractionRay();
+        }
+        private void Update() {
+            MantleControl();
+            if (!goldPlayerController.Movement.IsGrounded) {
+                CheckFall();
+            }
+            else {
+                StopCoroutine(longFallTimer);
+                if (isLongFalling) {
+                    HardLanding();
+                }
+                fallCheckStarted = false;
+            }
         }
 
         #endregion
         #region Interactions
+        /*
         private void OnTriggerEnter(Collider other) {
             var obj = other.GetComponentInParent<InteractableObject>();
             if (obj == null) return;
@@ -124,14 +163,42 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
                 interactable.InteractionAreaExited(this, other);
                 interactable = null;
             }
+        }*/
+        private void CastInteractionRay() {
+            if (crosshair == null) return;
+            RaycastHit hit;
+            Vector3 start = Camera.main.ScreenToWorldPoint(crosshair.transform.position);
+            Debug.DrawRay(start, Camera.main.transform.forward * interactionReach, Color.cyan);
+            if (Physics.Raycast(start, Camera.main.transform.forward, out hit, interactionReach)) {
+                var prevInteractable = interactable;
+                if (!hit.transform.root.gameObject.TryGetComponent(out interactable) && !hit.transform.TryGetComponent(out interactable)) {
+                    if(prevInteractable != interactable) Debug.Log($"Interactable object not found.");
+                    ClearInteraction();
+                    return;
+                }
+                if (interactable == prevInteractable) {
+                    return;
+                }
+                Debug.Log($"Interact with {interactable.name}");
+                interactable.PrepInteraction(this);
+                return;
+            }
+            ClearInteraction();
+            return;
         }
-
+        public void ClearInteraction() {
+            if(interactable == null) {
+                ClearMessage();
+                return;
+            }
+            interactable = null;
+            ClearMessage();
+        }
         public void OnInteract() {
             if (interactable == null) return;
             interactable.Interact(this);
 
         }
-
         public void InteractionMessage(string message) {
             interactionMessage = message; //may be redundant, but it was helpful for starting and may be helpful later.
             interactionMessageText.text = message;
@@ -149,43 +216,18 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             ClearMessage();
         }
         public void ClearMessage() {
-            interactionMessage = "";
-            interactionMessageText.text = "";
+            if (interactionMessage == string.Empty && interactionMessageText.text == string.Empty) return;
+            interactionMessage = string.Empty;
+            interactionMessageText.text = string.Empty;
             Debug.Log("Cleared messages.");
             //turn off the UI responsible for displaying this message.
         }
 
-        
+
 
         #endregion
         #region Movement
-        // On Late update because regular update intereferes with GoldPlayer. Ideally this can be fixed eventually.
-        void LateUpdate() {
-            goldPlayerController.Controller.center = new Vector3(0, goldPlayerController.Controller.height / 2, 0);
-            goldPlayerController.Movement.CrouchHeight = Mathf.MoveTowards(goldPlayerController.Movement.CrouchHeight, currentCrouchHeight, crouchTime * Time.deltaTime);
 
-            if (goldPlayerController.Movement.IsCrouching) {
-                cameraMovement.Crouched(goldPlayerController.Movement.CrouchHeight);
-                isCrouching = true;
-                OnCrouch();
-            }
-            else {
-                isCrouching = false;
-            }
-        }
-        private void Update() {
-            MantleControl();
-            if (!goldPlayerController.Movement.IsGrounded) {
-                CheckFall();
-            }
-            else {
-                StopCoroutine(longFallTimer);
-                if (isLongFalling) {
-                    HardLanding();
-                }
-                fallCheckStarted = false;
-            }
-        }
         #region Falling and Landing
         private void HardLanding() {
             hardLanding = true;
@@ -220,9 +262,9 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
 
         float FindCrouchHeight() {
             Vector3 heightCheckPosition = transform.localPosition + transform.forward * crouchHeightDetectionDistance;
-            Debug.DrawRay(heightCheckPosition, Vector3.up *1.4f, Color.green);
+            Debug.DrawRay(heightCheckPosition, Vector3.up * 1.4f, Color.green);
             float playerCeiling = CheckCeiling();
-            if(playerCeiling != currentCrouchHeight) {
+            if (playerCeiling != currentCrouchHeight) {
                 if (Physics.Raycast(heightCheckPosition, Vector3.up, out RaycastHit ceilingHit, crouchMax)) {
                     var height = Vector3.Distance(heightCheckPosition, ceilingHit.point) - goldPlayerController.Controller.skinWidth - crouchOffset;
                     if (height > currentCrouchHeight) {
@@ -240,8 +282,8 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             return crouchMax;
         }
         float CheckCeiling() {
-            Debug.DrawRay(transform.localPosition, Vector3.up*3, Color.magenta, 1f);
-            if (Physics.Raycast(transform.localPosition, Vector3.up, out RaycastHit ceilingHit, 5, ~playerLayer)){
+            Debug.DrawRay(transform.localPosition, Vector3.up * 3, Color.magenta, 1f);
+            if (Physics.Raycast(transform.localPosition, Vector3.up, out RaycastHit ceilingHit, 5, ~playerLayer)) {
                 float dist = Vector3.Distance(transform.localPosition, ceilingHit.point) - goldPlayerController.Controller.skinWidth - crouchOffset;
                 Debug.Log($"Ceiling found: {dist}");
                 return dist;
@@ -264,7 +306,7 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
 
         bool ObstacleCheck() {
             Vector3 startPoint = transform.localPosition + (transform.up * mantleHeight);
-            if(!Physics.Raycast(startPoint, transform.forward, mantleDistance + 0.5f)) {
+            if (!Physics.Raycast(startPoint, transform.forward, mantleDistance + 0.5f)) {
                 return false;
             }
             return true;
@@ -286,7 +328,7 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
 
         private void MantleControl() {
             if (isMantling) {
-                goldPlayerController.Movement.Gravity = gravity/3;
+                goldPlayerController.Movement.Gravity = gravity / 3;
                 goldPlayerController.Movement.CanMoveAround = false;
                 goldPlayerController.Audio.StopLandSound();
                 Vector3 movement;
@@ -321,6 +363,7 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
 #endif
 
 
-#endregion
+        #endregion
+        #endregion
     }
 }

@@ -9,12 +9,10 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         [Tooltip("The layer that the object interacts with. Should be the layer that the player is on.")]
         protected LayerMask playerLayer;
 
-        public virtual void InteractionAreaEntered(PlayerControllerExtras player, Collider colliderData) {
-            Debug.Log($"{this} interaction area entered {colliderData} collider.");
+        public virtual void PrepInteraction(PlayerControllerExtras player) {
             player.InteractionMessage($"Interact with {this}");
         }
-        public virtual void InteractionAreaExited(PlayerControllerExtras player, Collider colliderData) {
-            Debug.Log($"{this} interaction area exited {colliderData} collider.");
+        public virtual void CancelInteraction(PlayerControllerExtras player) {
             player.ClearMessage();
         }
         public virtual void Interact(PlayerControllerExtras player) {

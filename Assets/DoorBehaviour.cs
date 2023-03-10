@@ -36,10 +36,6 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         [Tooltip("Acts as a pivot for the door to rotate on. Create a transform and add it here to have it act as a pivot for the door.")]
         Transform doorPivot;
 
-        //REPLACE SOON WITH RAYCAST INTERACTION INSTEAD.
-        [SerializeField]
-        [Tooltip("Used to allow the player to open the door. Must be set to 'Trigger'.")]
-        Collider frontTrigger, backTrigger;
         [Space]
         [Header("Movement")]
         [Space]
@@ -70,10 +66,6 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         Quaternion goToRotation = Quaternion.identity;
 
         private void Awake() {
-            if (frontTrigger == null || backTrigger == null) {
-                Debug.LogError($"{this} is missing one or more triggers for the door. Create a collider, set it as a trigger, and apply it to the door component's 'Front Trigger' and 'Back Trigger' variables.");
-                return;
-            }
             if (doorPivot == null) {
                 Debug.LogError($"{this} is missing a door pivot. The door is unable to rotate. Create a transform and apply it to the door component's 'Door Pivot' variable in the inspector.");
                 return;
@@ -100,27 +92,16 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             }
         }
 
-        private void SetAllTriggersActiveState(bool activeState) {
-            frontTrigger.gameObject.SetActive(activeState);
-            backTrigger.gameObject.SetActive(activeState);
-        }
-
-        private void SetActiveTrigger(Collider trigger, bool activeState) {
-            trigger.gameObject.SetActive(activeState);
-        }
-
         private void MoveDoor() {
             doorPivot.transform.localRotation = Quaternion.Lerp(doorPivot.transform.localRotation, goToRotation, openSpeed * Time.deltaTime);
 
             if (doorPivot.transform.localRotation == goToRotation) {
                 isMoving = false;
                 isOpen = !isOpen;
-                SetAllTriggersActiveState(true);
             }
         }
         private void StartMovement() {
             isMoving = true;
-            SetAllTriggersActiveState(false);
             if (isOpen) {
                 goToRotation = Quaternion.identity;
             }
@@ -181,7 +162,7 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
                     break;
             }
         }
-        public override void InteractionAreaEntered(PlayerControllerExtras player, Collider colliderData) {
+        public override void PrepInteraction(PlayerControllerExtras player) {
             switch (state) {
                 case DoorStates.closed:
                     player.InteractionMessage(closedMessage);

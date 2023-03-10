@@ -5,8 +5,8 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
     public class ItemPickUp : InteractableObject {
         public ItemObject itemObject;
 
-        public override void InteractionAreaEntered(PlayerControllerExtras player, Collider colliderData) {
-            base.InteractionAreaEntered(player, colliderData);
+        public override void PrepInteraction(PlayerControllerExtras player) {
+            base.PrepInteraction(player);
             player.InteractionMessage($"Pick up {itemObject.name}.");
         }
 
