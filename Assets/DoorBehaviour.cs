@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Cox.ControllerProject.GoldPlayerAddons {
     public enum DoorStates {
@@ -23,6 +24,8 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
 
         [SerializeField]
         bool openOnUnlock = false;
+
+        public UnityEvent onDoorUnlock;
 
         [SerializeField]
         bool destroyKeyOnUnlock = false;
@@ -57,6 +60,8 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         string lockedMessage = "The door is locked.";
         [SerializeField]
         string latchedMessage = "The door is latched shut from the other side.";
+        [SerializeField]
+        string unlatchMessage = "Remove latch from the door.";
         [SerializeField]
         string sealedMessage = "Door is sealed shut and cannot be opened.";
         #endregion
@@ -111,7 +116,9 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
         }
 
         public override void Interact(PlayerControllerExtras player) {
-            if (!interactable) {
+            string message = string.Empty;
+
+            if (!isInteractable) {
                 FailedInteraction(player);
                 return;
             }
@@ -131,7 +138,7 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
                     state = DoorStates.closed;
                     break;
                 case DoorStates.locked:
-                    string message = $"Door cannot be opened without {key.name}.";
+                    message = $"Door cannot be opened without {key.name}.";
                     if (player.inventory != null) {
                         if (player.inventory.CompareItem(key)) {
                             state = DoorStates.closed;
@@ -146,7 +153,7 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
                                 StartMovement();
                                 state = DoorStates.opened;
                             }
-
+                            onDoorUnlock.Invoke();
                             player.InteractionMessage(message);
                             break;
                         }
@@ -155,7 +162,25 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
                     FailedInteraction(player, message);
                     break;
                 case DoorStates.latched:
-                    //if player is in correct trigger? or activate latch warning trigger?
+                    Vector3 toPlayer = player.transform.position - transform.position;
+                    float direction = Vector3.Dot(transform.forward, toPlayer);
+                    message = latchedMessage;
+                    if (direction > 0) {
+                        state = DoorStates.closed;
+                        message = $"Door unlatched. ";
+                        //front
+                        if (openOnUnlock) {
+                            message += $"\n Door opened.";
+                            StartMovement();
+                            state = DoorStates.opened;
+                        }
+                        onDoorUnlock.Invoke();
+                        player.InteractionMessage(message);
+
+                    }
+                    else {
+                        FailedInteraction(player);
+                    }
                     break;
                 case DoorStates.sealedShut:
                     //Warn player the door is sealed and cannot be opened by the player through normal or any means.
@@ -186,7 +211,15 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
                     player.InteractionMessage(lockedMessage);
                     break;
                 case DoorStates.latched:
-                    player.InteractionMessage(latchedMessage);
+                    Vector3 toPlayer = player.transform.position - transform.position;
+                    float direction = Vector3.Dot(transform.forward, toPlayer);
+
+                    if(direction > 0) {
+                        player.InteractionMessage(unlatchMessage);
+                    }
+                    else {
+                        player.InteractionMessage(latchedMessage);
+                    }
                     break;
                 case DoorStates.sealedShut:
                     player.InteractionMessage(sealedMessage);

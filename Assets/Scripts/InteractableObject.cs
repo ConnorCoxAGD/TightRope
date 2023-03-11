@@ -1,13 +1,9 @@
 using UnityEngine;
 namespace Cox.ControllerProject.GoldPlayerAddons {
     public abstract class InteractableObject : MonoBehaviour {
-        [Header("Interactions")]
         [SerializeField]
         [Tooltip("Can this object be interacted with?")]
-        protected bool interactable = true;
-        [SerializeField]
-        [Tooltip("The layer that the object interacts with. Should be the layer that the player is on.")]
-        protected LayerMask playerLayer;
+        protected bool isInteractable = true;
 
         public virtual void PrepInteraction(PlayerControllerExtras player) {
             player.InteractionMessage($"Interact with {this}");
@@ -16,7 +12,7 @@ namespace Cox.ControllerProject.GoldPlayerAddons {
             player.ClearMessage();
         }
         public virtual void Interact(PlayerControllerExtras player) {
-            if (!interactable) {
+            if (!isInteractable) {
                 FailedInteraction(player);
                 return;
             }
